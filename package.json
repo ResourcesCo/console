@@ -1,13 +1,25 @@
 {
-  "name": "create-next-example-app",
+  "name": "@resources/resources",
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "pretestonly": "taskr pretest",
+    "testonly": "NODE_PATH=test/lib jest \\.test.js",
+    "posttestonly": "taskr posttest",
+    "test": "npm run testonly -- --coverage --forceExit --runInBand --verbose --bail"
   },
   "dependencies": {
     "next": "^4.1.4",
     "react": "^16.2.0",
     "react-dom": "^16.2.0"
+  },
+  "devDependencies": {
+    "@taskr/esnext": "^1.1.0",
+    "chromedriver": "^2.33.2",
+    "fkill": "^5.1.0",
+    "jest-cli": "^21.2.1",
+    "taskr": "^1.1.0",
+    "wd": "^1.4.1"
   }
 }
