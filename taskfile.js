@@ -8,7 +8,7 @@ export async function pretest(task) {
 
 export async function posttest(task) {
   try {
-    execSync('pkill chromedriver', { stdio: 'ignore' })
+    execSync('killall chromedriver', { stdio: 'ignore' })
   } catch (err) {
     // Do nothing
   }

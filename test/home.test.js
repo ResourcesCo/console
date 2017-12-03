@@ -16,8 +16,8 @@ const cwd = join(__dirname, '..')
 
 async function startApp() {
   const instance = spawn(
-    nextBin,
-    ['start'],
+    '/usr/bin/env',
+    ['NODE_ENV=production', 'node', 'server.js'],
     { stdio: 'ignore', cwd }
   )
   await waitFor(500)
@@ -37,8 +37,8 @@ describe('Home', () => {
     const browser = wd.promiseRemote('http://localhost:9515/')
     await browser.init({browserName: 'chrome'})
     await browser.get('http://localhost:3000/')
-    const body = await browser.elementByCss('body')
-    const bodyText = await body.text()
-    expect(bodyText).toContain('Getting Started')
+    const submit = await browser.elementByCss('input[type=submit]')
+    const submitValue = await submit.getAttribute('value')
+    expect(submitValue).toBe('Sign In')
   })
 })
