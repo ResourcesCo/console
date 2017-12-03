@@ -1,15 +1,16 @@
 {
   "name": "@resources/resources",
   "scripts": {
-    "dev": "next",
+    "dev": "node server.js",
     "build": "next build",
-    "start": "next start",
+    "start": "NODE_ENV=production node server.js",
     "pretestonly": "taskr pretest",
     "testonly": "NODE_PATH=test/lib jest \\.test.js",
     "posttestonly": "taskr posttest",
     "test": "npm run testonly -- --coverage --forceExit --runInBand --verbose --bail"
   },
   "dependencies": {
+    "express": "^4.16.2",
     "next": "^4.1.4",
     "react": "^16.2.0",
     "react-dom": "^16.2.0"
