@@ -18,7 +18,7 @@ async function startApp() {
   const instance = spawn(
     '/usr/bin/env',
     ['NODE_ENV=production', 'node', 'server.js'],
-    { stdio: 'ignore', cwd }
+    { stdio: 'inherit', cwd }
   )
   await waitFor(500)
   return instance.pid
@@ -37,8 +37,9 @@ describe('Home', () => {
     const browser = wd.promiseRemote('http://localhost:9515/')
     await browser.init({browserName: 'chrome'})
     await browser.get('http://localhost:3000/')
+    await waitFor(200)
     const submit = await browser.elementByCss('input[type=submit]')
     const submitValue = await submit.getAttribute('value')
-    expect(submitValue).toBe('Sign In')
+    expect(submitValue).toBe('ENTER')
   })
 })
