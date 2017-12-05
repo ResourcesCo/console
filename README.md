@@ -1,5 +1,19 @@
 [![Build Status](https://travis-ci.org/resources/resources.svg?branch=master)](https://travis-ci.org/resources/resources)
 
+# resources
+
+TODO: add instructions for deploying to now
+
+Running in development:
+
+```
+export ACCESS_CODE=$(node -e "console.log(require('crypto').randomBytes(32).toString('hex'))")
+export SESSION_KEY=$(node -e "console.log(require('crypto').randomBytes(64).toString('hex'))")
+npm run dev
+```
+
+# create-next-app docs
+
 This project was bootstrapped with [Create Next App](https://github.com/segmentio/create-next-app).
 
 Find the most recent version of this guide at [here](https://github.com/segmentio/create-next-app/blob/master/lib/templates/default/README.md). And check out [Next.js repo](https://github.com/zeit/next.js) for the most up-to-date info.
