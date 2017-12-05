@@ -18,7 +18,7 @@ async function startApp() {
   const instance = spawn(
     '/usr/bin/env',
     ['NODE_ENV=production', 'node', 'server.js'],
-    { stdio: 'ignore', cwd }
+    { stdio: 'inherit', cwd }
   )
   await waitFor(500)
   return instance.pid
