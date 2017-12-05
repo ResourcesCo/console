@@ -37,6 +37,7 @@ describe('Home', () => {
     const browser = wd.promiseRemote('http://localhost:9515/')
     await browser.init({browserName: 'chrome'})
     await browser.get('http://localhost:3000/')
+    await waitFor(200)
     const submit = await browser.elementByCss('input[type=submit]')
     const submitValue = await submit.getAttribute('value')
     expect(submitValue).toBe('ENTER')
