@@ -4,7 +4,8 @@ export default () => (
       <a href="">GET</a>{" "}
       <a href="">https://api.github.com/v3/users/<em className="field">douglascrockford</em></a>{" "}
       <a href=""><span className="smaller">▼</span>json</a>{" "}
-      <a href="">ua:r</a>
+      <a href="">ua:<em className="field">r</em></a>{" "}
+      <a href="">auth:<em className="field">none</em></a>
     </div>
     <div className="right">
       <a href="" className="button">go</a>
