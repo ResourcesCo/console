@@ -1,8 +1,10 @@
 import {Component} from 'react'
 
 class Expandable extends Component {
-  constructor(props) {
-    super(props)
+  constructor({children, ...props}) {
+    super({children, ...props})
+    this.linkComponent = children[0]
+    this.contentComponent = children[1]
     this.state = { display: false }
   }
 
@@ -14,16 +16,33 @@ class Expandable extends Component {
     this.setState({ display: false })
   }
 
+  onPopoverRef = el => {
+    if (el) this.setState({ popoverWidth: el.offsetWidth })
+  }
+
+  popoverPosition() {
+    if (this.el && this.props.containerEl && this.state.popoverWidth) {
+      const leftEdge = this.el.offsetLeft + (this.el.offsetWidth / 2) - (this.state.popoverWidth / 2)
+      if (leftEdge < this.props.containerEl.offsetLeft) return 'left'
+      const rightEdge = this.el.offsetLeft + (this.el.offsetWidth / 2) + (this.state.popoverWidth / 2)
+      if (rightEdge > this.props.containerEl.offsetLeft + this.props.containerEl.offsetWidth) return 'right'
+      return 'center'
+    } else {
+      return 'invisible'
+    }
+  }
+
   render() {
     const display = this.state.display
     return (
-      <div className="expandable" onMouseEnter={this.show} onMouseLeave={this.hide}>
-        {this.props.children[0]}
+      <div className="expandable" onMouseEnter={this.show} onMouseLeave={this.hide} ref={el => this.el = el}>
+        {this.linkComponent}
         {this.state.display && (<div
-             className="popover"
-             style={{display: display ? 'block' : 'none'}}
+             className={['popover', this.popoverPosition()].join(' ')}
+             style={{maxWidth: '500px'}}
+             ref={this.onPopoverRef}
         >
-          {this.props.children[1]}
+          {this.contentComponent}
         </div>)}
         <style jsx>{`
           .expandable {
@@ -37,6 +56,18 @@ class Expandable extends Component {
             border-radius: 3px;
             padding: 2px 5px;
             background-color: #eee;
+          }
+          .popover.invisible {
+            visibility: hidden
+          }
+          .popover.left {
+          }
+          .popover.center {
+            left: 50%;
+            transform: translate(-50%, 0);
+          }
+          .popover.right {
+            right: 0;
           }
         `}</style>
       </div>
@@ -59,9 +90,20 @@ export default class RestHintOfGray extends Component {
             <div style={{whiteSpace: "nowrap"}}>url: https://api.github.com/v3/users/douglascrockford</div>
           </Expandable>
           {" "}
-          <a href=""><span className="smaller">▼</span>json</a>{" "}
-          <a href="">ua:<em className="field">r</em></a>{" "}
-          <a href="">auth:<em className="field">none</em></a>
+          <Expandable containerEl={this.containerEl}>
+            <a href=""><span className="smaller">▼</span>json</a>
+            <div style={{whiteSpace: "nowrap"}}><strong>header</strong> Accept: application/json</div>
+          </Expandable>
+          {" "}
+          <Expandable containerEl={this.containerEl}>
+            <a href="">ua:<em className="field">r</em></a>
+            <div style={{whiteSpace: "nowrap"}}><strong>header</strong> User-Agent: resources</div>
+          </Expandable>
+          {" "}
+          <Expandable containerEl={this.containerEl}>
+            <a href="">auth:<em className="field">none</em></a>
+            <div style={{width: 400}}>Without authorization, the number of requests permitted may be reduced. An Authorization header can be used for auth.</div>
+          </Expandable>
         </div>
         <div className="right">
           <a href="" className="button">go</a>

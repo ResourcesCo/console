@@ -12,7 +12,7 @@ export default () => (
 
     <style jsx>{`
       .center {
-        max-width: 720px;
+        max-width: 600px;
         margin: 10px auto;
       }
     `}</style>
