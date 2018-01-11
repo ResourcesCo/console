@@ -11,7 +11,8 @@ const handle = app.getRequestHandler()
 
 const accessCode = process.env.ACCESS_CODE
 const sessionKey = process.env.SESSION_KEY
-if (! (accessCode.length >= 64 && sessionKey.length >= 64)) {
+if (! (accessCode && accessCode.length >= 64 &&
+       sessionKey && sessionKey.length >= 64)) {
   // TODO: show these instructions on the page
   console.error('Error: ACCESS_CODE and SESSION_KEY env vars must be set')
   process.exit(1)
