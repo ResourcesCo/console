@@ -1,11 +1,9 @@
 import Link from 'next/link'
-import Head from '../components/head'
-import Nav from '../components/nav'
 
 export default () => (
   <div className="sign-in">
     <form className="sign-in-form" action="/sign-in" method="POST">
-      <input name="password" type="password" placeholder="ACCESS CODE" />
+      <input ref={el => el.focus()} name="password" type="password" placeholder="ACCESS CODE" />
       <input type="submit" value="ENTER" />
     </form>
 

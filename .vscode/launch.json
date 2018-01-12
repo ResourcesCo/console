@@ -18,7 +18,11 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "program": "${workspaceFolder}/server.js"
+      "program": "${workspaceFolder}/server.js",
+      "env": {
+        "ACCESS_CODE": "53184f758a2ef399dddbb246f4b3f7fd",
+        "SESSION_KEY": "b5286b7ca136457924c4bb04bec328d2e6a74ff87cbb0d89667676c5432fed10055ac7d56195963060906977c4dddba35e3f8ac770c3ee7bac1f303ac4c450d8"
+      }
     }
   ]
 }
