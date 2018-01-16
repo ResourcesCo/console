@@ -1,0 +1,8 @@
+{
+  "method": "GET",
+  "url": "https://api.github.com/users/crockford",
+  "headers": {
+    "Accept": "application/json",
+    "User-Agent": "resources"
+  }
+}

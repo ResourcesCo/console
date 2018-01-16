@@ -1,18 +1,29 @@
 {
   "name": "@resources/resources",
   "scripts": {
-    "dev": "node server.js",
+    "dev": "node server",
     "build": "next build",
-    "start": "NODE_ENV=production node server.js",
+    "start": "NODE_ENV=production node server",
     "test": "jest \\.test.js"
   },
   "dependencies": {
+    "apollo-client-preset": "^1.0.6",
     "body-parser": "^1.18.2",
+    "classnames": "^2.2.5",
+    "codemirror": "^5.33.0",
     "cookie-session": "^2.0.0-beta.3",
     "express": "^4.16.2",
+    "express-graphql": "^0.6.11",
+    "graphql": "^0.12.3",
+    "graphql-anywhere": "^4.1.1",
+    "graphql-tag": "^2.6.1",
+    "isomorphic-fetch": "^2.2.1",
     "next": "^4.1.4",
     "react": "^16.2.0",
-    "react-dom": "^16.2.0"
+    "react-apollo": "^2.0.4",
+    "react-codemirror2": "^3.0.7",
+    "react-dom": "^16.2.0",
+    "react-icons": "^2.2.7"
   },
   "devDependencies": {
     "chromedriver": "^2.33.2",

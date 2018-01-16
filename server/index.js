@@ -4,25 +4,22 @@ const next = require('next')
 const bodyParser = require('body-parser')
 const cookieSession = require('cookie-session')
 
+const NoAuth = require('./auth/no-auth')
+const AccessCodeAuth = require('./auth/access-code-auth')
+
 const port = parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
+
+const graphqlMiddleware = require('./graphql')
+
 const handle = app.getRequestHandler()
 
-const accessCode = process.env.ACCESS_CODE
-const sessionKey = process.env.SESSION_KEY
-if (! (accessCode && accessCode.length >= 32 &&
-       sessionKey && sessionKey.length >= 64)) {
-  console.error('Error: ACCESS_CODE and SESSION_KEY env vars must be set')
-  process.exit(1)
-}
-
-function ensureLoggedIn(req, res, next) {
-  if (req.session.user) {
-    next()
-  } else {
-    res.redirect('/')
-  }
+let auth;
+if (process.env !== 'production' && process.env !== 'staging' && !process.env.ACCESS_CODE) {
+  auth = new NoAuth()
+} else {
+  auth = new AccessCodeAuth()
 }
 
 async function init() {
@@ -30,13 +27,9 @@ async function init() {
 
   const server = express()
 
-  server.use(bodyParser.urlencoded({ extended: false }))
-
-  server.use(cookieSession({
-    name: 'resources',
-    keys: [sessionKey],
-    maxAge: 7 * 24 * 60 * 60 * 1000
-  }))
+  server.use(/\/((?!graphql).)*/, bodyParser.urlencoded({ extended: false }))
+  
+  auth.addMiddleware(server)
 
   server.post('/sign-in', (req, res) => {
     if (req.body.password === accessCode) {
@@ -46,7 +39,7 @@ async function init() {
   })
 
   server.get('/', (req, res) => {
-    if (req.session.user) {
+    if (auth.loggedIn()) {
       return app.render(req, res, '/')
     } else {
       return app.render(req, res, '/login')
@@ -57,7 +50,9 @@ async function init() {
     return handle(req, res)
   })
 
-  server.get('*', ensureLoggedIn, (req, res) => {
+  server.use('/graphql', auth.ensureLoggedIn, graphqlMiddleware)
+
+  server.get('*', auth.ensureLoggedIn, (req, res) => {
     return handle(req, res)
   })
 
