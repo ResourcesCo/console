@@ -46,6 +46,10 @@ async function init() {
     }
   })
 
+  server.get('/requests/:id', auth.ensureLoggedIn, (req, res) => {
+    return app.render(req, res, '/', { id: req.params.id })
+  })
+
   server.get('/_next/*', (req, res) => {
     return handle(req, res)
   })

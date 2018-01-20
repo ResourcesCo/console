@@ -9,8 +9,9 @@ export default class SectionBar extends Component {
         {
           tabs.map(tab => {
             const selected = this.props.selectedTab == tab.props.value
+            const disabled = tab.props.disabled
             return (
-              <div key={tab.props.value} className={classNames('tab', {selected})}>
+              <div key={tab.props.value} className={classNames('tab', {selected, disabled})}>
                 {tab.props.children}
               </div>
             )
@@ -31,6 +32,9 @@ export default class SectionBar extends Component {
           }
           .tab.selected {
             border-bottom: 2px solid #fff;
+          }
+          .tab.disabled {
+            color: #86919B;
           }
         `}</style>
       </div>

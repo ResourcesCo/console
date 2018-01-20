@@ -5,30 +5,20 @@ import SendIcon from 'react-icons/lib/md/send'
 import SectionBar from './section-bar'
 
 export default class OutputForm extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      sending: false
-    }
-  }
-
-  sendClicked = event => {
-    event.preventDefault()
-    this.setState({
-      sending: true
-    })
-    return false
-  }
   render() {
     return (
-      <form className="output-form" onSubmit={this.sendClicked}>
+      <form className="output-form">
+        <SectionBar selectedTab="function">
+          <tab value="function">Function</tab>
+          <tab value="output" disabled>Output</tab>
+        </SectionBar>
         <div className="code">
           <div>
-            <SectionBar selectedTab="function">
-              <tab value="function">Function</tab>
-              <tab value="output">Output</tab>
-            </SectionBar>
-            <Code json={false} value={this.props.currentFunction && this.props.currentFunction.source} />
+            <Code
+              json={false}
+              value={this.props.currentFunction && this.props.currentFunction.source}
+              options={{readOnly: true}}
+            />
           </div>
         </div>
       
