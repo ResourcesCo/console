@@ -2,7 +2,6 @@ const express = require('express')
 const next = require('next')
 
 const bodyParser = require('body-parser')
-const cookieSession = require('cookie-session')
 
 const NoAuth = require('./auth/no-auth')
 const AccessCodeAuth = require('./auth/access-code-auth')
@@ -26,20 +25,13 @@ async function init() {
   await app.prepare()
 
   const server = express()
-
-  server.use(/\/((?!graphql).)*/, bodyParser.urlencoded({ extended: false }))
   
   auth.addMiddleware(server)
 
-  server.post('/sign-in', (req, res) => {
-    if (req.body.password === accessCode) {
-      req.session.user = true
-    }
-    res.redirect('/')
-  })
+  server.use(/\/((?!graphql).)*/, bodyParser.urlencoded({ extended: false }))
 
   server.get('/', (req, res) => {
-    if (auth.loggedIn()) {
+    if (auth.loggedIn(req)) {
       return app.render(req, res, '/')
     } else {
       return app.render(req, res, '/login')
