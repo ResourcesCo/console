@@ -5,7 +5,12 @@ const {join, resolve} = require('path')
 
 const requests = []
 
-const functions = ['http-json', 'mysql'].map(id => (
+const functionValues = {
+  'http-json': require('../functions/http-json'),
+  mysql: require('../functions/http-json')
+}
+
+const functions = Object.keys(functionValues).map(id => (
   {
     id,
     name: id,
@@ -82,11 +87,13 @@ const mutationType = new graphql.GraphQLObjectType({
       },
       resolve: async (_, {id, input, functionId}) => {
         await delay(1000)
+        const fn = functionValues[functionId]
+        const output = await fn(JSON.parse(input))
         const request = {
           id,
           input,
           functionId,
-          output: JSON.stringify({})
+          output: JSON.stringify(output, null, 2)
         }
         requests.push(request)
         return request

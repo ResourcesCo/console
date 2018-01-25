@@ -1,15 +1,15 @@
 const axios = require('axios')
 
-export default async function request({method, url, headers, data}) {
+module.exports = async function request({method, url, headers, data}) {
   try {
     let response
     if (['GET', 'HEAD', 'OPTIONS'].includes(method)) {
-      response = axios.request({method, url, headers: headers || {}})
+      response = await axios.request({method, url, headers: headers || {}})
     } else {
-      response = axios.request({method, url, headers, data})
+      response = await axios.request({method, url, headers, data})
     }
-    const { status, headers, data } = response
-    return { status, headers, data }
+    const { status } = response
+    return { status, headers: response.headers, data: response.data }
   } catch (err) {
     return { error: err.toString() }
   }

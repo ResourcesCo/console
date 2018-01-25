@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "apollo-client-preset": "^1.0.6",
+    "axios": "^0.17.1",
     "body-parser": "^1.18.2",
     "classnames": "^2.2.5",
     "codemirror": "^5.33.0",
