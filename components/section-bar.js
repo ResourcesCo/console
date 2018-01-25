@@ -2,16 +2,24 @@ import {Component} from 'react'
 import classNames from 'classnames'
 
 export default class SectionBar extends Component {
+  handleClick(value, disabled) {
+    if (!disabled) {
+      this.props.onChange(value)
+    }
+  }
+
   render() {
     const tabs = [...this.props.children]
     return (
       <div className="section-bar">
         {
           tabs.map(tab => {
-            const selected = this.props.selectedTab == tab.props.value
+            const active = this.props.activeTab == tab.props.value
             const disabled = tab.props.disabled
             return (
-              <div key={tab.props.value} className={classNames('tab', {selected, disabled})}>
+              <div key={tab.props.value}
+                   className={classNames('tab', {active, disabled})}
+                   onClick={() => this.handleClick(tab.props.value, disabled)}>
                 {tab.props.children}
               </div>
             )
@@ -30,7 +38,7 @@ export default class SectionBar extends Component {
             letter-spacing: 0.15em;
             font-size: 85%;
           }
-          .tab.selected {
+          .tab.active {
             border-bottom: 2px solid #fff;
           }
           .tab.disabled {
