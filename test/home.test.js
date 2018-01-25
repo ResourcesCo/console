@@ -40,8 +40,8 @@ describe('Home', () => {
   afterAll(async () => {
     await browser.quit()
     try {
-      fkill(serverPid)
-      fkill(chromedriver.pid)
+      fkill(serverPid).then(() => null).catch(err => null)
+      fkill(chromedriver.pid).then(() => null).catch(err => null)
       execSync('killall chromedriver', { stdio: 'ignore' })
     } catch (err) {
       // ignore
@@ -52,7 +52,7 @@ describe('Home', () => {
     await browser.get('http://localhost:3000/')
     await waitFor(200)
 
-    const input = await browser.elementByCss('input[name=password]')
+    const input = await browser.elementByCss('input[name=accessCode]')
     await input.sendKeys(env.ACCESS_CODE)
 
     const submit = await browser.elementByCss('input[type=submit]')

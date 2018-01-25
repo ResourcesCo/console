@@ -5,7 +5,7 @@ export default () => (
   <div className="sign-in">
     <Head />
     <form className="sign-in-form" action="/sign-in" method="POST">
-      <input ref={el => el.focus()} name="password" type="password" placeholder="ACCESS CODE" />
+      <input ref={el => el.focus()} name="accessCode" type="text" placeholder="ACCESS CODE" />
       <input type="submit" value="ENTER" />
     </form>
 

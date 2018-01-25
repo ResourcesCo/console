@@ -1,14 +1,12 @@
 const express = require('express')
 const next = require('next')
 
-const bodyParser = require('body-parser')
-
 const NoAuth = require('./auth/no-auth')
 const AccessCodeAuth = require('./auth/access-code-auth')
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
-const app = next({ dev })
+const app = next({ dev, quiet: true })
 
 const graphqlMiddleware = require('./graphql')
 
@@ -27,8 +25,6 @@ async function init() {
   const server = express()
   
   auth.addMiddleware(server)
-
-  server.use(/\/((?!graphql).)*/, bodyParser.urlencoded({ extended: false }))
 
   server.get('/', (req, res) => {
     if (auth.loggedIn(req)) {

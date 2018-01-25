@@ -1,3 +1,4 @@
+const bodyParser = require('body-parser')
 const cookieSession = require('cookie-session')
 
 class AccessCodeAuth {
@@ -20,8 +21,8 @@ class AccessCodeAuth {
       maxAge: 7 * 24 * 60 * 60 * 1000
     }))
 
-    server.post('/sign-in', (req, res) => {
-      if (req.body.password === this.accessCode) {
+    server.post('/sign-in', bodyParser.urlencoded({ extended: false }), (req, res) => {
+      if (req.body.accessCode === this.accessCode) {
         req.session.user = true
       }
       res.redirect('/')
