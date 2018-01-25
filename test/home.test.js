@@ -22,7 +22,7 @@ const env = {
 
 async function startApp() {
   const server = spawn(
-    'node server.js',
+    'node server',
     { stdio: 'inherit', shell: true, cwd, env }
   )
   await waitFor(500)
@@ -61,8 +61,8 @@ describe('Home', () => {
     await submit.click()
 
     await waitFor(200)
-    const h1 = await browser.elementByCss('h1')
+    const h1 = await browser.elementByCss('.section-bar')
     const headerText = await h1.text()
-    expect(headerText).toMatch(/welcome/i)
+    expect(headerText).toMatch(/output/i)
   })
 })
