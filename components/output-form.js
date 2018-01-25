@@ -6,6 +6,7 @@ import SectionBar from './section-bar'
 
 export default class OutputForm extends Component {
   render() {
+    const {output} = this.props
     return (
       <form className="output-form">
         <SectionBar selectedTab="function">

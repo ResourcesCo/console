@@ -33,11 +33,16 @@ class App extends Component {
     })
   }
 
+  get output() {
+    if (!this.props.data.request) return null;
+    if (typeof this.props.data.request.output !== 'string') return null;
+    return this.props.data.request.output;
+  }
+
   get loading() {
     if (!this.props.data.request) return false;
     const createdRequest = (this.props.data.request.id !== 'none')
-    const outputLoaded = (typeof this.props.data.request.output === 'string')
-    return (createdRequest && !outputLoaded)
+    return (createdRequest && this.output === null)
   }
 
   render() {
@@ -49,7 +54,7 @@ class App extends Component {
           <FunctionForm loading={this.loading} currentFunction={this.currentFunction} onSubmit={this.onSubmit} />
         </div>
         <div className="output">
-          <OutputForm currentFunction={this.currentFunction} />
+          <OutputForm currentFunction={this.currentFunction} output={this.output} />
         </div>
 
         <style jsx>{`
