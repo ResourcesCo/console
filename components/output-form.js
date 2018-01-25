@@ -61,8 +61,8 @@ export default class OutputForm extends Component {
             width: 100%;
             height: 100%;
           }
-          .code :global(.CodeMirror) {
-            height: 100%;
+          :global(.CodeMirror) {
+            cursor: text;
           }
         `}</style>
       </form>
