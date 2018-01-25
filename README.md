@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/benatkin/resources.svg?branch=master)](https://travis-ci.org/benatkin/resources)
+[![Build Status](https://travis-ci.org/resources/console.svg?branch=master)](https://travis-ci.org/resources/console)
 
 # resources
 

@@ -6,7 +6,7 @@ const AccessCodeAuth = require('./auth/access-code-auth')
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
-const app = next({ dev, quiet: true })
+const app = next({ dev })
 
 const graphqlMiddleware = require('./graphql')
 
