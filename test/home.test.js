@@ -16,13 +16,13 @@ const cwd = join(__dirname, '..')
 const env = {
   ...process.env,
   NODE_ENV: 'production',
-  SESSION_KEY: '8c415823f70769700a1440dc3b871ecb7666e481332a874a22ad2595f954fef13c37ffd1cd9eb6c49d99258fe9e3f8ad841350a5523c3f86c726fe2a34bb1020',
-  ACCESS_CODE: '030245c3d496d0811636a7b3dfeebc5b33c9804eb1053feb3460744ae7b8f5435d629bd0ce552ea1846a3f95e39f1b6fdea5293809c71f3779313c3ee3f60d75'
+  SESSION_KEY: 'b5286b7ca136457924c4bb04bec328d2e6a74ff87cbb0d89667676c5432fed10055ac7d56195963060906977c4dddba35e3f8ac770c3ee7bac1f303ac4c450d8',
+  ACCESS_CODE: '53184f758a2ef399dddbb246f4b3f7fd'
 }
 
 async function startApp() {
   const server = spawn(
-    'node server.js',
+    'node server',
     { stdio: 'inherit', shell: true, cwd, env }
   )
   await waitFor(500)
@@ -40,8 +40,8 @@ describe('Home', () => {
   afterAll(async () => {
     await browser.quit()
     try {
-      fkill(serverPid)
-      fkill(chromedriver.pid)
+      fkill(serverPid).then(() => null).catch(err => null)
+      fkill(chromedriver.pid).then(() => null).catch(err => null)
       execSync('killall chromedriver', { stdio: 'ignore' })
     } catch (err) {
       // ignore
@@ -52,7 +52,7 @@ describe('Home', () => {
     await browser.get('http://localhost:3000/')
     await waitFor(200)
 
-    const input = await browser.elementByCss('input[name=password]')
+    const input = await browser.elementByCss('input[name=accessCode]')
     await input.sendKeys(env.ACCESS_CODE)
 
     const submit = await browser.elementByCss('input[type=submit]')
@@ -61,8 +61,8 @@ describe('Home', () => {
     await submit.click()
 
     await waitFor(200)
-    const h1 = await browser.elementByCss('h1')
+    const h1 = await browser.elementByCss('.section-bar')
     const headerText = await h1.text()
-    expect(headerText).toMatch(/welcome/i)
+    expect(headerText).toMatch(/output/i)
   })
 })

@@ -17,3 +17,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# avoid accidental commit of npm lockfile, since this uses yarn
+package-lock.json

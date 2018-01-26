@@ -1,9 +1,11 @@
 import Link from 'next/link'
+import Head from '../components/head'
 
 export default () => (
   <div className="sign-in">
+    <Head />
     <form className="sign-in-form" action="/sign-in" method="POST">
-      <input ref={el => el.focus()} name="password" type="password" placeholder="ACCESS CODE" />
+      <input ref={el => el.focus()} name="accessCode" type="text" placeholder="ACCESS CODE" />
       <input type="submit" value="ENTER" />
     </form>
 
@@ -13,7 +15,8 @@ export default () => (
       }
       .sign-in-form {
         margin: 100px auto 0;
-        width: 30%;
+        width: 30em;
+        max-width: 80%;
       }
       .sign-in-form input {
         width: 100%;
