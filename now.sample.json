@@ -1,0 +1,6 @@
+{
+  "env": {
+    "AWS_ACCESS_KEY_ID": "@projectname-console-aws-access-key-id",
+    "AWS_SECRET_ACCESS_KEY": "@projectname-console-aws-secret-access-key"
+  }
+}

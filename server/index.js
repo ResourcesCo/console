@@ -1,3 +1,7 @@
+if (! ['staging', 'production'].includes(process.env.NODE_ENV)) {
+  require('now-env')
+}
+
 const express = require('express')
 const next = require('next')
 

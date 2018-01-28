@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "apollo-client-preset": "^1.0.6",
+    "aws-sdk": "^2.188.0",
     "axios": "^0.17.1",
     "body-parser": "^1.18.2",
     "classnames": "^2.2.5",
@@ -34,6 +35,7 @@
     "chromedriver": "^2.33.2",
     "fkill": "^5.1.0",
     "jest-cli": "^21.2.1",
+    "now-env": "^3.0.3",
     "wd": "^1.4.1"
   }
 }

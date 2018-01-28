@@ -1,0 +1,11 @@
+{
+  "service": "s3",
+  "method": "PutObject",
+  "serviceParams": {
+    "accessKeyId": "${secrets.AWS_ACCESS_KEY_ID}",
+    "secretAccessKey": "${secrets.AWS_SECRET_ACCESS_KEY}"
+  },
+  "Bucket": "",
+  "Key": "",
+  "Body": ""
+}
