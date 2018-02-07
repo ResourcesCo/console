@@ -1,11 +1,14 @@
 {
   "service": "s3",
-  "method": "PutObject",
-  "serviceParams": {
-    "accessKeyId": "${secrets.AWS_ACCESS_KEY_ID}",
-    "secretAccessKey": "${secrets.AWS_SECRET_ACCESS_KEY}"
-  },
-  "Bucket": "",
-  "Key": "",
-  "Body": ""
+  "method": "putObject",
+  "params": {
+    "ContentType": "application/json",
+    "Bucket": {"<ref>": "settings.resources.s3.bucket"},
+    "Key": "hello.json",
+    "Body": {
+      "<string>": {
+        "Hello": "World"
+      }
+    }
+  }
 }
