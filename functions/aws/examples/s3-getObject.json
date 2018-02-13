@@ -9,10 +9,10 @@
       "Hello": "World"
     }
   },
-  "inputFilters": [
+  "outputFilters": [
     {
-      "path": "params.Body",
-      "filter": "format",
+      "path": "Body",
+      "filter": "parse",
       "type": "json"
     }
   ]

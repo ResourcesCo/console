@@ -1,6 +1,6 @@
 const axios = require('axios')
 
-module.exports = async function request({method, url, headers, data}, {account}) {
+module.exports = async function request({method, url, headers, data}) {
   try {
     let response
     if (['GET', 'HEAD', 'OPTIONS'].includes(method)) {

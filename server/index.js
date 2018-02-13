@@ -10,13 +10,13 @@ const AccessCodeAuth = require('./auth/access-code-auth')
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
-const app = next({ dev })
+const app = next({ dev, quiet: true })
 
 const graphqlMiddleware = require('./graphql')
 
 const handle = app.getRequestHandler()
 
-let auth;
+let auth
 if (process.env !== 'production' && process.env !== 'staging' && !process.env.ACCESS_CODE) {
   auth = new NoAuth()
 } else {

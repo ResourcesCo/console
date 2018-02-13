@@ -87,11 +87,18 @@ const mutationType = new graphql.GraphQLObjectType({
         functionId: { type: graphql.GraphQLString }
       },
       resolve: async (_, {id, input, functionId}) => {
-        await delay(1000)
+        await delay(200)
         const fn = functionValues[functionId]
+        let output
         const parsedInput = JSON.parse(input)
-        const interpolatedInput = interpolate(parsedInput)
-        const output = await fn(interpolatedInput || parsedInput)
+        try {
+          output = await fn(parsedInput, {env: process.env})
+        } catch (err) {
+          output = {
+            error: err.toString(),
+            stack: err.stack.split("\n")
+          }
+        }
         const request = {
           id,
           input,
