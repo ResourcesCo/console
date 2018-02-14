@@ -2,12 +2,13 @@ const expressGraphql = require('express-graphql')
 const graphql = require('graphql')
 const {readFileSync} = require('fs')
 const {join, resolve} = require('path')
+const {interpolate} = require('../lib/interpolation')
 
 const requests = []
 
 const functionValues = {
-  'http-json': require('../functions/http-json'),
-  mysql: require('../functions/http-json')
+  http: require('../functions/http'),
+  aws: require('../functions/aws')
 }
 
 const functions = Object.keys(functionValues).map(id => (
@@ -86,9 +87,18 @@ const mutationType = new graphql.GraphQLObjectType({
         functionId: { type: graphql.GraphQLString }
       },
       resolve: async (_, {id, input, functionId}) => {
-        await delay(1000)
+        await delay(200)
         const fn = functionValues[functionId]
-        const output = await fn(JSON.parse(input))
+        let output
+        const parsedInput = JSON.parse(input)
+        try {
+          output = await fn(parsedInput, {env: process.env})
+        } catch (err) {
+          output = {
+            error: err.toString(),
+            stack: err.stack.split("\n")
+          }
+        }
         const request = {
           id,
           input,

@@ -1,13 +1,15 @@
 {
   "name": "@resources/resources",
   "scripts": {
-    "dev": "node server",
+    "dev": "nodemon -w server -w functions server",
+    "dev-debug": "node --inspect server",
     "build": "next build",
     "start": "NODE_ENV=production node server",
     "test": "jest \\.test.js"
   },
   "dependencies": {
     "apollo-client-preset": "^1.0.6",
+    "aws-sdk": "^2.188.0",
     "axios": "^0.17.1",
     "body-parser": "^1.18.2",
     "classnames": "^2.2.5",
@@ -34,6 +36,8 @@
     "chromedriver": "^2.33.2",
     "fkill": "^5.1.0",
     "jest-cli": "^21.2.1",
+    "nodemon": "^1.14.12",
+    "now-env": "^3.0.3",
     "wd": "^1.4.1"
   }
 }

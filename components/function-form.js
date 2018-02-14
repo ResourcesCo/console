@@ -1,8 +1,7 @@
 import {Component} from 'react'
 import dynamic from 'next/dynamic'
 const Code = dynamic(import('./code-with-codemirror'), {ssr: false})
-import Spinner from 'react-svg-spinner'
-import SendIcon from 'react-icons/lib/md/send'
+import SendBar from './send-bar'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import classNames from 'classnames'
@@ -48,14 +47,13 @@ class FunctionForm extends Component {
             />
           </div>
         </div>
-        <div className={classNames('send-bar', {loading: this.props.loading})}>
-          <span className="spinner">
-            <Spinner size="1em" color="white" />
-          </span>
-          <span className="send-icon">
-            <SendIcon onClick={this.sendClicked} />
-          </span>
-        </div>
+        <SendBar 
+          allFunctions={this.props.allFunctions}
+          currentFunction={this.props.currentFunction}
+          loading={this.props.loading}
+          onSendClick={this.sendClicked}
+          onFunctionSelect={this.props.onFunctionSelect}
+        />
       
         <style jsx>{`
           .function-form {
@@ -75,32 +73,6 @@ class FunctionForm extends Component {
           }
           .code :global(.CodeMirror) {
             height: 100%;
-          }
-          .send-bar {
-            background-color: #8bc34a;
-            color: #fff;
-            text-align: right;
-            width: 100%;
-            font-size: 200%;
-            padding: 2px 5px;
-            border: none;
-          }
-          .send-bar .spinner :global(svg) {
-            margin-bottom: -5px;
-            display: none;
-          }
-          .send-bar .send-icon :global(svg) {
-            margin-top: -6px;
-            cursor: pointer;
-          }
-          .send-bar.loading .spinner :global(svg) {
-            display: inline;
-          }
-          .send-bar.loading .send-icon :global(svg) {
-            display: none;
-          }
-          .send-bar:focus {
-            outline: 0;
           }
         `}</style>
       </form>

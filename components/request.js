@@ -10,15 +10,29 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      currentFunction: null,
+      currentFunctionId: null,
       loading: false
     }
   }
 
   get currentFunction() {
-    if (this.props.functions.allFunctions) {
-      return this.props.functions.allFunctions[0]
+    if (this.state.currentFunctionId) {
+      return this.allFunctions.filter(fn => fn.id === this.state.currentFunctionId)[0]
+    } else {
+      return this.allFunctions[0]
     }
+  }
+
+  get allFunctions() {
+    if (this.props.functions.allFunctions) {
+      return this.props.functions.allFunctions
+    } else {
+      return []
+    }
+  }
+
+  onFunctionSelect = functionId => {
+    this.setState({currentFunctionId: functionId})
   }
 
   onSubmit = code => {
@@ -51,7 +65,13 @@ class App extends Component {
         <Head loggedIn={true} />
         
         <div className="function">
-          <FunctionForm loading={this.loading} currentFunction={this.currentFunction} onSubmit={this.onSubmit} />
+          <FunctionForm
+            loading={this.loading}
+            allFunctions={this.allFunctions}
+            currentFunction={this.currentFunction}
+            onFunctionSelect={this.onFunctionSelect}
+            onSubmit={this.onSubmit}
+          />
         </div>
         <div className="output">
           <OutputForm currentFunction={this.currentFunction} output={this.output} />
