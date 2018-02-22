@@ -1,13 +1,10 @@
 {
   "service": "s3",
-  "method": "putObject",
+  "method": "getObject",
   "params": {
     "ContentType": "application/json",
     "Bucket": "myBucket",
-    "Key": "hello.json",
-    "Body": {
-      "Hello": "World"
-    }
+    "Key": "hello.json"
   },
   "outputFilters": [
     {

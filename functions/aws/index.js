@@ -1,11 +1,10 @@
 const {promisify} = require('util')
 
 module.exports = async (input, {env}) => {
-  const { inputFilters, ...inputData } = input
-  const filteredInput = applyFilters(inputData, inputFilters)
+  const { inputFilters, outputFilters, ...inputData } = input
+  const filteredInput = inputFilters ? applyFilters(inputData, inputFilters) : inputData
   const output = await request(filteredInput, {env})
-  const {outputFilters, ...outputData} = output
-  return applyFilters(outputData, outputFilters)
+  return outputFilters ? applyFilters(output, outputFilters) : output
 }
 
 const request = async ({ service, method, params, ...opts }, {env}) => {
@@ -61,12 +60,16 @@ const filterFunctions = {
     if (type !== 'json') {
       throw new Error(`Don't know how to parse type: '${type}'`)
     }
-    return JSON.parse(value)
+    try {
+      return JSON.parse(value)
+    } catch (e) {
+      throw new Error(`Error parsing JSON: '${value}'`)
+    }
   }
 }
 
 const applyFilters = (data, filterSpecs) => {
-  let filteredData = JSON.parse(JSON.stringify(data))
+  let filteredData = data
   filterSpecs.forEach(filterSpec => {
     const {filter, path, ...opts} = filterSpec
     const filterFn = filterFunctions[filter]
