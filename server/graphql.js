@@ -3,6 +3,7 @@ const graphql = require('graphql')
 const {readFileSync} = require('fs')
 const {join, resolve} = require('path')
 const {interpolate} = require('../lib/interpolation')
+const Request = require('./request')
 
 const requests = []
 
@@ -88,25 +89,20 @@ const mutationType = new graphql.GraphQLObjectType({
       },
       resolve: async (_, {id, input, functionId}) => {
         await delay(200)
-        const fn = functionValues[functionId]
-        let output
         const parsedInput = JSON.parse(input)
-        try {
-          output = await fn(parsedInput, {env: process.env})
-        } catch (err) {
-          output = {
-            error: err.toString(),
-            stack: err.stack.split("\n")
-          }
-        }
-        const request = {
+        const request = new Request({
           id,
-          input,
-          functionId,
-          output: JSON.stringify(output, null, 2)
-        }
+          input: parsedInput,
+          fn: functionValues[functionId]
+        })
+        const output = await request.send()
         requests.push(request)
-        return request
+        return {
+          id: request.id,
+          input: request.input,
+          functionId: functionId,
+          output: JSON.stringify(request.output, null, 2)
+        }
       }
     }
   }
