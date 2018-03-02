@@ -1,25 +1,10 @@
 const expressGraphql = require('express-graphql')
 const graphql = require('graphql')
-const {readFileSync} = require('fs')
-const {join, resolve} = require('path')
 const {interpolate} = require('../lib/interpolation')
+const ApiFunction = require('./api-function')
 const Request = require('./request')
 
 const requests = []
-
-const functionValues = {
-  http: require('../functions/http'),
-  aws: require('../functions/aws')
-}
-
-const functions = Object.keys(functionValues).map(id => (
-  {
-    id,
-    name: id,
-    source: readFileSync(join('functions', id, 'index.js')),
-    example: readFileSync(join('functions', id, 'example.json'))
-  }
-))
 
 const functionType = new graphql.GraphQLObjectType({
   name: 'Function',
@@ -50,13 +35,13 @@ const queryType = new graphql.GraphQLObjectType({
         id: { type: graphql.GraphQLID }
       },
       resolve: function (_, {id}) {
-        return functions.filter(func => func.id === id)[0]
+        return ApiFunction.findById(id)
       }
     },
     allFunctions: {
       type: new graphql.GraphQLList(functionType),
       resolve: function (_, {id}) {
-        return functions
+        return ApiFunction.all()
       }
     },
     request: {
@@ -93,14 +78,14 @@ const mutationType = new graphql.GraphQLObjectType({
         const request = new Request({
           id,
           input: parsedInput,
-          fn: functionValues[functionId]
+          functionId
         })
         const output = await request.send()
         requests.push(request)
         return {
           id: request.id,
           input: request.input,
-          functionId: functionId,
+          functionId: request.functionId,
           output: JSON.stringify(request.output, null, 2)
         }
       }

@@ -1,14 +1,17 @@
+const ApiFunction = require('./api-function')
+
 class Request {
-  constructor({id, input, fn}) {
+  constructor({id, input, functionId}) {
     this.id = id
     this.input = input
-    this.fn = fn
+    this.functionId = functionId
     this.output = null
   }
 
   async send() {
+    const fn = ApiFunction.findById(this.functionId).fn
     try {
-      this.output = await this.fn(this.input, {env: process.env})
+      this.output = await fn(this.input, {env: process.env})
     } catch (err) {
       this.output = {
         error: err.toString(),
