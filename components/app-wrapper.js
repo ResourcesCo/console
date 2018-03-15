@@ -6,8 +6,8 @@ import graphqlClient from '../lib/graphql-client'
 import { ApolloProvider } from 'react-apollo'
 import App from './app'
 
-export default () => (
+export default ({requestId}) => (
   <ApolloProvider client={graphqlClient}>
-    <App />
+    <App requestId={requestId} />
   </ApolloProvider>
 )

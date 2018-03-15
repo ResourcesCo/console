@@ -32,7 +32,7 @@ async function init() {
 
   server.get('/', (req, res) => {
     if (auth.loggedIn(req)) {
-      return app.render(req, res, '/')
+      return app.render(req, res, '/', {id: 'none'})
     } else {
       return app.render(req, res, '/login')
     }

@@ -1,6 +1,8 @@
 const ApiFunction = require('./api-function')
 const config = require('../config.json')
 
+const cachedRequests = []
+
 class Request {
   constructor({id, input, functionId}) {
     this.id = id
@@ -28,6 +30,7 @@ class Request {
         saveErrorStack: err.stack.split("\n")
       }
     }
+    cachedRequests.push(this)
     return this.output
   }
 
@@ -53,6 +56,19 @@ class Request {
       envPrefix: config.console.dataStore.envPrefix
     }, {env: process.env})
   }
+
+  toFlatJSON() {
+    return {
+      id: this.id,
+      input: JSON.stringify(this.input, null, 2),
+      functionId: this.functionId,
+      output: JSON.stringify(this.output, null, 2)
+    }
+  }
+}
+
+Request.findById = async (id) => {
+  return cachedRequests.filter(request => request.id === id)[0]
 }
 
 module.exports = Request

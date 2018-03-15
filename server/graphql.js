@@ -4,8 +4,6 @@ const {interpolate} = require('../lib/interpolation')
 const ApiFunction = require('./api-function')
 const Request = require('./request')
 
-const requests = []
-
 const functionType = new graphql.GraphQLObjectType({
   name: 'Function',
   fields: {
@@ -34,13 +32,13 @@ const queryType = new graphql.GraphQLObjectType({
       args: {
         id: { type: graphql.GraphQLID }
       },
-      resolve: function (_, {id}) {
+      resolve: (_, {id}) => {
         return ApiFunction.findById(id)
       }
     },
     allFunctions: {
       type: new graphql.GraphQLList(functionType),
-      resolve: function (_, {id}) {
+      resolve: (_, {id}) => {
         return ApiFunction.all()
       }
     },
@@ -49,8 +47,9 @@ const queryType = new graphql.GraphQLObjectType({
       args: {
         id: { type: graphql.GraphQLID }
       },
-      resolve: function (_, {id}) {
-        return requests.filter(request => request.id === id)[0] || { id }
+      resolve: async (_, {id}) => {
+        const request = await Request.findById(id)
+        return request ? request.toFlatJSON() : { id }
       }
     }
   }
@@ -73,7 +72,6 @@ const mutationType = new graphql.GraphQLObjectType({
         functionId: { type: graphql.GraphQLString }
       },
       resolve: async (_, {id, input, functionId}) => {
-        await delay(200)
         const parsedInput = JSON.parse(input)
         const request = new Request({
           id,
@@ -81,13 +79,7 @@ const mutationType = new graphql.GraphQLObjectType({
           functionId
         })
         const output = await request.send()
-        requests.push(request)
-        return {
-          id: request.id,
-          input: request.input,
-          functionId: request.functionId,
-          output: JSON.stringify(request.output, null, 2)
-        }
+        return request.toFlatJSON()
       }
     }
   }
