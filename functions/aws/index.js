@@ -10,7 +10,8 @@ module.exports = async (input, {env}) => {
 const request = async ({ service, method, params, ...opts }, {env}) => {
   const { outputFilters, envPrefix, serviceParams } = opts
   const klass = require(`aws-sdk/clients/${service}`)
-  const serviceObject = new klass(getServiceParams({serviceParams, envPrefix, env}))
+  const serviceConstructorParams = getServiceParams({serviceParams, envPrefix, env})
+  const serviceObject = new klass(serviceConstructorParams)
   const methodFn = serviceObject[method]
   if (!methodFn) {
     throw new Error(`Cannot find method: ${method}`)
@@ -36,7 +37,7 @@ const getServiceParams = ({serviceParams, envPrefix, env}) => {
   const res = {}
   Object.entries(credentials).forEach(([key, envVariable]) => {
     const value = env[`${fullEnvPrefix}${envVariable}`]
-    if (value) {
+    if (typeof value === 'string' && value.length > 0 && value !== 'undefined') {
       res[key] = value
     }
   })
