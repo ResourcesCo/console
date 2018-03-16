@@ -1,17 +1,21 @@
 const ApiFunction = require('./api-function')
 const config = require('../config.json')
 
+const aws = ApiFunction.findById('aws').fn
+
+const pendingRequests = {}
 const cachedRequests = []
 
 class Request {
-  constructor({id, input, functionId}) {
+  constructor({id, input, functionId, output}) {
     this.id = id
     this.input = input
     this.functionId = functionId
-    this.output = null
+    this.output = output
   }
 
   async send() {
+    pendingRequests[this.id] = true
     const fn = ApiFunction.findById(this.functionId).fn
     try {
       this.output = await fn(this.input, {env: process.env})
@@ -31,6 +35,7 @@ class Request {
       }
     }
     cachedRequests.push(this)
+    delete pendingRequests[this.id]
     return this.output
   }
 
@@ -48,7 +53,6 @@ class Request {
       Key: `requests/${this.id}.json`,
       Body: JSON.stringify(data, null, 2)
     }
-    const aws = ApiFunction.findById('aws').fn
     await aws({
       service: 's3',
       method: 'putObject',
@@ -67,8 +71,27 @@ class Request {
   }
 }
 
+Request.getById = async (id) => {
+  const request = {
+    service: 's3',
+    method: 'getObject',
+    params: {
+      Bucket: config.console.dataStore.bucket,
+      Key: `requests/${id}.json`
+    },
+    envPrefix: config.console.dataStore.envPrefix
+  }
+  const response = await aws(request, {env: process.env})
+  const data = JSON.parse(response.Body)
+  return new Request(data)
+}
+
 Request.findById = async (id) => {
-  return cachedRequests.filter(request => request.id === id)[0]
+  let result = cachedRequests.filter(request => request.id === id)[0]
+  if (! result && id && id !== 'none' && !(id in pendingRequests)) {
+    result = await Request.getById(id)
+  }
+  return result
 }
 
 module.exports = Request

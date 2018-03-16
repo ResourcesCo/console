@@ -1,0 +1,8 @@
+{
+  "console": {
+    "dataStore": {
+      "bucket": "resourcesco-console-data",
+      "envPrefix": "CONSOLE_DATA"
+    }
+  }
+}
