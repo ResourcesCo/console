@@ -21,6 +21,9 @@ yarn-error.log*
 # avoid accidental commit of npm lockfile, since this uses yarn
 package-lock.json
 
+# config
+config.json
+
 # now-env
 now.json
 now-secrets.json

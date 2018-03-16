@@ -1,0 +1,8 @@
+{
+  "console": {
+    "dataStore": {
+      "bucket": "EXAMPLE_BUCKET",
+      "envPrefix": "CONSOLE_DATA"
+    }
+  }
+}

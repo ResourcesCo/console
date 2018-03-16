@@ -3,24 +3,24 @@ import Head from './head'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 import Request from './request'
+import Router from 'next/router'
 
 class App extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      requestId: 'none'
-    }
   }
 
   handleChange = ({requestId}) => {
-    this.setState({requestId})
+    Router.push({ pathname: '/', query: { id: requestId } },
+                `/requests/${requestId}`,
+                { shallow: true })
   }
 
   render() {
     return (
       <Request
         functions={this.props.functions}
-        requestId={this.state.requestId}
+        requestId={this.props.requestId}
         onChange={this.handleChange}
       />
     )

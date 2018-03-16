@@ -1,17 +1,17 @@
 const {promisify} = require('util')
 
 module.exports = async (input, {env}) => {
-  const { inputFilters, ...inputData } = input
-  const filteredInput = applyFilters(inputData, inputFilters)
+  const { inputFilters, outputFilters, ...inputData } = input
+  const filteredInput = inputFilters ? applyFilters(inputData, inputFilters) : inputData
   const output = await request(filteredInput, {env})
-  const {outputFilters, ...outputData} = output
-  return applyFilters(outputData, outputFilters)
+  return outputFilters ? applyFilters(output, outputFilters) : output
 }
 
 const request = async ({ service, method, params, ...opts }, {env}) => {
   const { outputFilters, envPrefix, serviceParams } = opts
   const klass = require(`aws-sdk/clients/${service}`)
-  const serviceObject = new klass(getServiceParams({serviceParams, envPrefix, env}))
+  const serviceConstructorParams = getServiceParams({serviceParams, envPrefix, env})
+  const serviceObject = new klass(serviceConstructorParams)
   const methodFn = serviceObject[method]
   if (!methodFn) {
     throw new Error(`Cannot find method: ${method}`)
@@ -37,7 +37,7 @@ const getServiceParams = ({serviceParams, envPrefix, env}) => {
   const res = {}
   Object.entries(credentials).forEach(([key, envVariable]) => {
     const value = env[`${fullEnvPrefix}${envVariable}`]
-    if (value) {
+    if (typeof value === 'string' && value.length > 0 && value !== 'undefined') {
       res[key] = value
     }
   })
@@ -61,12 +61,16 @@ const filterFunctions = {
     if (type !== 'json') {
       throw new Error(`Don't know how to parse type: '${type}'`)
     }
-    return JSON.parse(value)
+    try {
+      return JSON.parse(value)
+    } catch (e) {
+      throw new Error(`Error parsing JSON: '${value}'`)
+    }
   }
 }
 
 const applyFilters = (data, filterSpecs) => {
-  let filteredData = JSON.parse(JSON.stringify(data))
+  let filteredData = data
   filterSpecs.forEach(filterSpec => {
     const {filter, path, ...opts} = filterSpec
     const filterFn = filterFunctions[filter]
