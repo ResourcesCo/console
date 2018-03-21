@@ -1,5 +1,4 @@
 const ApiFunction = require('./api-function')
-
 const aws = ApiFunction.findById('aws').fn
 
 const pendingRequests = {}
