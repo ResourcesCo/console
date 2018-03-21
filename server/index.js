@@ -11,7 +11,7 @@ const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev, quiet: true })
 
 const graphqlMiddleware = require('./graphql')
-const {randomState, authUrl, getToken} = require('./auth')
+const auth = require('./auth')
 const {checkEnv} = require('./util')
 
 const handle = app.getRequestHandler()
@@ -29,9 +29,9 @@ async function init() {
   }))
 
   server.get('/auth/github', (req, res) => {
-    const state = randomState()
+    const state = auth.randomState()
     req.session.state = state
-    res.redirect(authUrl(state))
+    res.redirect(auth.authUrl(state))
   })
 
   server.get('/auth/github/callback', async (req, res) => {
@@ -43,12 +43,20 @@ async function init() {
 
     let token
     try {
-      token = await getToken({code})
+      token = await auth.getToken({code})
     } catch (e) {
       console.error('Error getting token:', e)
       return res.status(401).json({error: 'Authentication failed.'})
     }
-    console.log('got token', token)
+
+    let username
+    try {
+      username = await auth.getUsername({token})
+    } catch (e) {
+      console.error('Error getting token:', e)
+      return res.status(401).json({error: 'Authentication failed.'})
+    }
+
     res.redirect('/')
   })
 
