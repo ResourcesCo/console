@@ -1,5 +1,6 @@
 const crypto = require('crypto')
 const simpleAuth = require('simple-oauth2')
+const Iron = require('iron')
 const ApiFunction = require('./api-function')
 const http = ApiFunction.findById('http').fn
 
@@ -48,4 +49,12 @@ exports.getUsername = async ({token}) => {
     throw new Error('Username request failed')
   }
   return response.data.login
+}
+
+exports.seal = async value => {
+  return await Iron.seal(value, process.env.CONSOLE_SESSION_KEY, Iron.defaults)
+}
+
+exports.unseal = async value => {
+  return await Iron.unseal(value, process.env.CONSOLE_SESSION_KEY, Iron.defaults)
 }

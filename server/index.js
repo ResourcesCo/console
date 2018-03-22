@@ -58,7 +58,15 @@ async function init() {
       return res.status(401).json({error: 'Authentication failed.'})
     }
 
+    req.session.username = username
+    req.session.accessToken = await auth.seal(token)
+
     res.redirect('/')
+  })
+
+  server.get('/log-token', async (req, res) => {
+    const token = await auth.unseal(req.session.accessToken)
+    res.status(200).json({})
   })
 
   server.get('/', (req, res) => {
