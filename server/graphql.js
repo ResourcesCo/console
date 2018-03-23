@@ -1,6 +1,5 @@
 const expressGraphql = require('express-graphql')
 const graphql = require('graphql')
-const {interpolate} = require('../lib/interpolation')
 const ApiFunction = require('./api-function')
 const Request = require('./request')
 

@@ -15,7 +15,9 @@ const nextBin = join(__dirname, '..', 'node_modules', '.bin', 'next')
 const cwd = join(__dirname, '..')
 const env = {
   ...process.env,
-  NODE_ENV: 'production'
+  NODE_ENV: 'production',
+  CONSOLE_CONFIG_S3_BUCKET: 'resourcesco-console-config',
+  CONSOLE_DATA_S3_BUCKET: 'resourcesco-console-data'
 }
 
 async function startApp() {

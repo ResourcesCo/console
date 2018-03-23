@@ -1,5 +1,4 @@
 const ApiFunction = require('./api-function')
-const config = require('../config.json')
 
 const aws = ApiFunction.findById('aws').fn
 
@@ -49,7 +48,7 @@ class Request {
     }
     const saveParams = {
       ContentType: 'application/json',
-      Bucket: config.console.dataStore.bucket,
+      Bucket: process.env.CONSOLE_DATA_S3_BUCKET,
       Key: `requests/${this.id}.json`,
       Body: JSON.stringify(data, null, 2)
     }
@@ -57,7 +56,7 @@ class Request {
       service: 's3',
       method: 'putObject',
       params: saveParams,
-      envPrefix: config.console.dataStore.envPrefix
+      envPrefix: 'CONSOLE'
     }, {env: process.env})
   }
 
@@ -76,10 +75,10 @@ Request.getById = async (id) => {
     service: 's3',
     method: 'getObject',
     params: {
-      Bucket: config.console.dataStore.bucket,
+      Bucket: process.env.CONSOLE_DATA_S3_BUCKET,
       Key: `requests/${id}.json`
     },
-    envPrefix: config.console.dataStore.envPrefix
+    envPrefix: 'CONSOLE'
   }
   const response = await aws(request, {env: process.env})
   const data = JSON.parse(response.Body)
