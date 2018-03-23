@@ -4,12 +4,15 @@ if (! ['staging', 'production'].includes(process.env.NODE_ENV)) {
 
 const express = require('express')
 const next = require('next')
+const cookieSession = require('cookie-session')
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev, quiet: true })
 
 const graphqlMiddleware = require('./graphql')
+const auth = require('./auth')
+const {checkEnv} = require('./util')
 
 const handle = app.getRequestHandler()
 
@@ -17,6 +20,54 @@ async function init() {
   await app.prepare()
 
   const server = express()
+
+  checkEnv('CONSOLE_SESSION_KEY', 64)
+  server.use(cookieSession({
+    name: 'resources-console',
+    keys: [process.env.CONSOLE_SESSION_KEY],
+    maxAge: 14 * 24 * 60 * 60 * 1000
+  }))
+
+  server.get('/auth/github', (req, res) => {
+    const state = auth.randomState()
+    req.session.state = state
+    res.redirect(auth.authUrl(state))
+  })
+
+  server.get('/auth/github/callback', async (req, res) => {
+    const {code, state} = req.query
+    if (state !== req.session.state) {
+      console.error('Invalid state:', state, 'Expected:', req.session.state)
+      return res.status(401).json({error: 'Authentication failed.'})
+    }
+    delete req.session['state']
+
+    let token
+    try {
+      token = await auth.getToken({code})
+    } catch (e) {
+      console.error('Error getting token:', e)
+      return res.status(401).json({error: 'Authentication failed.'})
+    }
+
+    let username
+    try {
+      username = await auth.getUsername({token})
+    } catch (e) {
+      console.error('Error getting token:', e)
+      return res.status(401).json({error: 'Authentication failed.'})
+    }
+
+    req.session.username = username
+    req.session.accessToken = await auth.seal(token)
+
+    res.redirect('/')
+  })
+
+  server.get('/log-token', async (req, res) => {
+    const token = await auth.unseal(req.session.accessToken)
+    res.status(200).json({})
+  })
 
   server.get('/', (req, res) => {
     return app.render(req, res, '/', {id: 'none'})
