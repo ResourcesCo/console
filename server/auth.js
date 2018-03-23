@@ -33,6 +33,24 @@ exports.getToken = async ({code}) => {
   return result.access_token
 }
 
+exports.getTeams = async ({token}) => {
+  const request = {
+    "method": "GET",
+    "url": "https://api.github.com/teams",
+    "headers": {
+      "Authorization": `Bearer ${token}`,
+      "Accept": "application/json",
+      "User-Agent": "resources"
+    }
+  }
+  const response = await http(request)
+  if (response.status !== 200) {
+    console.error('Username request failed', response)
+    throw new Error('Username request failed')
+  }
+  return response.data
+}
+
 exports.getUsername = async ({token}) => {
   const request = {
     "method": "GET",

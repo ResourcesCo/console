@@ -50,7 +50,7 @@ describe('Home', () => {
 
   it('opens the site', async () => {
     await waitFor(200)
-    await browser.get('http://localhost:3000/')
+    await browser.get('http://localhost:4567/')
     await waitFor(800)
 
     const h1 = await browser.elementByCss('.section-bar')

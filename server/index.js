@@ -6,7 +6,7 @@ const express = require('express')
 const next = require('next')
 const cookieSession = require('cookie-session')
 
-const port = parseInt(process.env.PORT, 10) || 3000
+const port = parseInt(process.env.PORT, 10) || 4567
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev, quiet: true })
 
