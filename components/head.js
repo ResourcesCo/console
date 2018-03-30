@@ -5,6 +5,7 @@ const Head = ({loggedIn, title}) => (
     <meta charSet="UTF-8" />
     <title>{title || ''}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel='icon' href='/static/favicon.ico' />
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" />
     {loggedIn && (<link key="codemirror-css-lib" rel="stylesheet" href="https://unpkg.com/codemirror@5.33.0/lib/codemirror.css" />)}
     {loggedIn && (<link key="codemirror-css-theme-material" rel="stylesheet" href="https://unpkg.com/codemirror@5.33.0/theme/material.css" />)}

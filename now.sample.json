@@ -1,17 +1,12 @@
 {
   "env": {
-    "CONSOLE_CONFIG_AWS_ACCESS_KEY_ID": "",
-    "CONSOLE_CONFIG_AWS_SECRET_ACCESS_KEY": "@console-config-aws-secret-access-key",
-    "CONSOLE_CONFIG_S3_BUCKET": "",
-    "CONSOLE_DATA_AWS_ACCESS_KEY_ID": "",
-    "CONSOLE_DATA_AWS_SECRET_ACCESS_KEY": "@console-data-aws-secret-access-key",
-    "CONSOLE_DATA_S3_BUCKET": "",
-    "CONSOLE_BASE_URL": "",
-    "CONSOLE_GITHUB_CLIENT_ID": "",
-    "CONSOLE_GITHUB_CLIENT_SECRET": "@console-github-client-secret",
-    "CONSOLE_GITHUB_ADMIN": "",
-    "CONSOLE_GITHUB_TEAMS": "",
-    "CONSOLE_GITHUB_USERS": "",
-    "CONSOLE_SESSION_KEY": ""
+    "AWS_ACCESS_KEY_ID": "ENTER_HERE",
+    "AWS_SECRET_ACCESS_KEY": "@console-aws-secret-access-key",
+    "AWS_S3_BUCKET": "resourcesco-console-data",
+    "BASE_URL": "https://example.com/",
+    "GITHUB_CLIENT_ID": "ENTER_HERE",
+    "GITHUB_CLIENT_SECRET": "@console-github-client-secret",
+    "GITHUB_USERS": "username1:1234,username2:2468",
+    "SESSION_KEY": "ENTER_HERE"
   }
 }

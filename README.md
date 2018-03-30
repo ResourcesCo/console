@@ -1,51 +1,96 @@
 [![Build Status](https://travis-ci.org/resources/console.svg?branch=master)](https://travis-ci.org/resources/console) [![with-coffee](https://img.shields.io/badge/made%20with-%E2%98%95%EF%B8%8Fcoffee-yellow.svg)](https://github.com/morajabi/with-coffee)
 
-# resources
+# resources.co API console
 
-## S3
+The resources.co API console is a web application which enables people to make
+API requests and database queries and share them with others on their team.
+It's very simple to set up, and only requires a node.js server (which can be
+set up easily on a PaaS like [now](https://now.sh) or
+[Heroku](https://heroku.com/), a GitHub account for authentication, and an S3
+bucket for storage.
 
-Create a two s3 buckets, one for data and one for configuration.
-Suggested names: `projectname-console-data` and `projectname-console-config`.
-Create an IAM username that has access to these buckets. Enter the
-information into these environment variables:
+# Getting Started
 
-- `CONSOLE_AWS_ACCESS_KEY_ID`
-- `CONSOLE_AWS_SECRET_ACCESS_KEY`
-- `CONSOLE_AWS_DEFAULT_REGION` - Optional. This may make access faster.
-- `CONSOLE_AWS_ENDPOINT` - Optional. This enables DigitalOcean Spaces and Minio.
-- `CONSOLE_CONFIG_S3_BUCKET`
-- `CONSOLE_DATA_S3_BUCKET`
+## Step 1: Set up GitHub OAuth
 
-## GitHub OAuth
+You'll need a node.js server, and to know what URL it will be deployed at,
+and to define some environment variables.
 
-Register a new GitHub OAuth application, set the redirect to `/auth/github`
-on your server or `localhost:4567/auth/github`, and fill this out:
+If you're using `now`, you can copy `now.sample.json` to `now.json` and
+define them in `now.json`. You can use
+[now-secrets](https://zeit.co/blog/environment-variables-secrets) or just
+replace `@console-aws-secret-access-key` and
+`@console-github-client-secret` with the actual values (environment
+variables in now.sh are private whether or not they're secrets - secrets
+just adds an extra level of protection).
 
-- `CONSOLE_BASE_URL` - The base URL, including `https:` but not including
-    the trailing backslash. Example: `https://console.example.com`
-- `CONSOLE_GITHUB_CLIENT_ID` - The client ID from registering the OAuth application
-- `CONSOLE_GITHUB_CLIENT_SECRET` - The client secret from registering the OAuth application
-- `CONSOLE_GITHUB_USERS` - Separated by commas. Each can either be just a username,
-    or `username:id`. Examples: `example,myexample`, `example:123,example2:456`,
-    `examplewithid:123, plainexample`
-- `CONSOLE_GITHUB_TEAMS` - The organization and the slug with a slash
-    between them. Example: `resources/dev`. Like CONSOLE_GITHUB_USERS it
-    can also contain an ID. Examples: `resources/dev,resources/contractors`,
-    `resources/dev:518,resources/contractors:319`
+First you'll need a session token. You can generate one using:
 
-In the future IDs may be stored in the configuration database and be required
-to match, and/or the app might provide help in modifying the environment variables
-to include IDs for more security. GitHub allows username reuse but in order for
-a username to be reused it must first be deleted. If this is not a concern, IDs
-don't need to be added. They are still recommended, though.
+``` bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
 
-- [Find a GitHub user ID](https://caius.github.io/github_id/)
-- [Find a GitHub team ID](http://fabian-kostadinov.github.io/2015/01/16/how-to-find-a-github-team-id/)
+Store it in the environment variable `SESSION_KEY`.
 
-## Session Key
+Next you'll need to define the node environment and the base URL of
+your site:
 
-- `CONSOLE_SESSION_KEY` - You can generate this using:
-    
-    ```
-    node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-    ```
+- `NODE_ENV`: set this to `staging` or `production` when deploying, or
+    leave blank when running locally
+- `BASE_URL`: set this to the base URL without a trailing slash - example:
+    `https://example.now.sh` when deploying or `http://localhost:4567`
+    when running locally
+
+On to setting up a GitHub application. Go to [GitHub > Settings >
+Developer Settings > OAuth Applications > New OAuth
+App](https://github.com/settings/applications/new) and create one. Use
+`$BASE_URL/auth/github` for the *Authorization callback URL*. Example:
+`https://example.now.sh/auth/github` or `http://localhost:4567`
+
+Once it's created, set these environment variables:
+
+- `GITHUB_CLIENT_ID` - The client ID from registering the OAuth application
+- `GITHUB_CLIENT_SECRET` - The client secret from registering the OAuth
+    application
+
+Now to define who is allowed to access it. This is in the `GITHUB_USERS`
+environment variable, and is a comma-separated list of `name:id` pairs.
+Both the username and the user ID must match. To get the user ids, run
+the command below or go to [Find Github User
+ID](https://caius.github.io/github_id/):
+
+``` bash
+curl https://api.github.com/users/username
+```
+
+Define `GITHUB_USERS` like this:
+
+`benatkin:4126,resources-test:37493865`
+
+## Step 2: Set up an S3 bucket
+
+Create an S3 bucket, and an IAM user that has read/write access to the bucket.
+Add these variables to your server's environment:
+
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_DEFAULT_REGION` - Optional. This may make access faster.
+- `AWS_ENDPOINT` - Optional. This enables DigitalOcean Spaces, Minio, and other S3-compatible services.
+- `AWS_S3_BUCKET` - The name of the bucket
+
+## Step 3: Deploy
+
+Finally, deploy the app and open it in your browser. It will prompt you to sign
+in with GitHub. When you're signed in, you can make an HTTP request.
+
+# Development
+
+## CI
+
+### Setting travis-ci secrets
+
+``` bash
+travis encrypt SESSION_KEY=$SESSION_KEY --add env.global
+travis encrypt GITHUB_CLIENT_SECRET=$GITHUB_CLIENT_SECRET --add env.global
+travis encrypt AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --add env.global
+```

@@ -21,10 +21,10 @@ async function init() {
 
   const server = express()
 
-  checkEnv('CONSOLE_SESSION_KEY', 64)
+  checkEnv('SESSION_KEY', 64)
   server.use(cookieSession({
     name: 'resources-console',
-    keys: [process.env.CONSOLE_SESSION_KEY],
+    keys: [process.env.SESSION_KEY],
     maxAge: 14 * 24 * 60 * 60 * 1000
   }))
 
@@ -59,6 +59,7 @@ async function init() {
     }
 
     req.session.username = username
+    console.log('token', token)
     req.session.accessToken = await auth.seal(token)
 
     res.redirect('/')

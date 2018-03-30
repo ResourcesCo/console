@@ -47,15 +47,14 @@ class Request {
     }
     const saveParams = {
       ContentType: 'application/json',
-      Bucket: process.env.CONSOLE_DATA_S3_BUCKET,
+      Bucket: process.env.AWS_S3_BUCKET,
       Key: `requests/${this.id}.json`,
       Body: JSON.stringify(data, null, 2)
     }
     await aws({
       service: 's3',
       method: 'putObject',
-      params: saveParams,
-      envPrefix: 'CONSOLE'
+      params: saveParams
     }, {env: process.env})
   }
 
@@ -74,7 +73,7 @@ Request.getById = async (id) => {
     service: 's3',
     method: 'getObject',
     params: {
-      Bucket: process.env.CONSOLE_DATA_S3_BUCKET,
+      Bucket: process.env.AWS_S3_BUCKET,
       Key: `requests/${id}.json`
     },
     envPrefix: 'CONSOLE'

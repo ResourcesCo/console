@@ -1,3 +1,4 @@
+require('now-env')
 const {join} = require('path')
 const {spawn, execSync} = require('child_process')
 const fkill = require('fkill')
@@ -16,8 +17,7 @@ const cwd = join(__dirname, '..')
 const env = {
   ...process.env,
   NODE_ENV: 'production',
-  CONSOLE_CONFIG_S3_BUCKET: 'resourcesco-console-config',
-  CONSOLE_DATA_S3_BUCKET: 'resourcesco-console-data'
+  AWS_S3_BUCKET: 'resourcesco-console-data'
 }
 
 async function startApp() {
