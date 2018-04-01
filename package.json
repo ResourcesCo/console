@@ -5,7 +5,7 @@
     "dev-debug": "node --inspect server",
     "build": "next build",
     "start": "NODE_ENV=production node server",
-    "test": "jest \\.test.js -t 'is authorized' && jest \\.test.js -t 'is not authorized'"
+    "test": "jest \\.test.js -t 'is authorized' && sleep 1 && jest \\.test.js -t 'is not authorized'"
   },
   "dependencies": {
     "apollo-client-preset": "^1.0.6",

@@ -4,7 +4,7 @@ const {spawn, execSync} = require('child_process')
 const fkill = require('fkill')
 const wd = require('wd')
 
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 15000
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 25000
 
 function waitFor(timeout) {
   return new Promise((resolve, reject) => {
@@ -38,9 +38,13 @@ describe('Home', () => {
     await browser.init({browserName: 'chrome'})
   })
   afterAll(async () => {
-    await browser.quit()
     try {
       fkill(serverPid).then(() => null).catch(err => null)
+    } catch (err) {
+      // ignore
+    }
+    await browser.quit()
+    try {
       fkill(chromedriver.pid).then(() => null).catch(err => null)
       execSync('killall chromedriver', { stdio: 'ignore' })
     } catch (err) {
@@ -67,6 +71,13 @@ describe('Home', () => {
     await submitButton.click()
     await waitFor(500)
 
+    const authorizeButton = await browser.elementByCssIfExists('[name=authorize]')
+    if (authorizeButton) {
+      await waitFor(1000)
+      await authorizeButton.click()
+      await waitFor(500)
+    }
+
     const h1 = await browser.elementByCss('.section-bar')
     const headerText = await h1.text()
     expect(headerText).toMatch(/output/i)
@@ -90,6 +101,13 @@ describe('Home', () => {
     const submitButton = await browser.elementByCss('[type=submit]')
     await submitButton.click()
     await waitFor(500)
+
+    const authorizeButton = await browser.elementByCssIfExists('[name=authorize]')
+    if (authorizeButton) {
+      await waitFor(1000)
+      await authorizeButton.click()
+      await waitFor(500)
+    }
 
     const button2 = await browser.elementByCss('button.sign-in')
     const buttonText2 = await button2.text()
