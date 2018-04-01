@@ -5,7 +5,6 @@ const ApiFunction = require('./api-function')
 const http = ApiFunction.findById('http').fn
 const lruCache = require('lru-cache')
 
-const teamCache = lruCache({max: 10, maxAge: 30 * 60 * 1000})
 const authCache = lruCache({max: 50, maxAge: 30 * 60 * 1000})
 
 const oauth = simpleAuth.create({
@@ -17,6 +16,14 @@ const oauth = simpleAuth.create({
     tokenHost: 'https://github.com',
     tokenPath: '/login/oauth/access_token',
     authorizePath: '/login/oauth/authorize'
+  }
+})
+
+const allowedUsers = process.env.GITHUB_USERS.split(',').map(s => {
+  const a = s.trim().split(':')
+  return {
+    id: parseInt(a[1].trim(), 10),
+    username: a[0].trim()
   }
 })
 
@@ -32,12 +39,16 @@ exports.authUrl = state => {
   })
 }
 
-exports.getToken = async ({code}) => {
+exports.getToken = async (code) => {
   const result = await oauth.authorizationCode.getToken({code})
+  if (!result.access_token) {
+    console.error('Token request failed', result)
+    throw new Error('Token request failed')
+  }
   return result.access_token
 }
 
-exports.getUsername = async ({token}) => {
+exports.getUser = async (token) => {
   const request = {
     "method": "GET",
     "url": "https://api.github.com/user",
@@ -52,17 +63,36 @@ exports.getUsername = async ({token}) => {
     console.error('Username request failed', response)
     throw new Error('Username request failed')
   }
-  return response.data.login
+  return {
+    id: response.data.id,
+    username: response.data.login
+  }
 }
 
-exports.checkAuth = async ({encryptedToken}) => {
-  
+exports.checkAuth = async (encryptedToken = null) => {
+  if (!encryptedToken) {
+    return false
+  }
+
+  const cachedResult = authCache.get(encryptedToken)
+  if (cachedResult === true || cachedResult === false) {
+    return cachedResult
+  }
+
+  const token = await exports.unseal(encryptedToken)
+  const user = await exports.getUser(token)
+  const matchedUsers = allowedUsers.filter(iterUser => {
+    return iterUser.id === user.id && iterUser.username === user.username
+  })
+  const result = matchedUsers.length > 0
+  authCache.set(encryptedToken, result)
+  return result
 }
 
 exports.seal = async value => {
-  return await Iron.seal(value, process.env.SESSION_KEY, Iron.defaults)
+  return await Iron.seal(value, process.env.SESSION_KEY + '_encrypt', Iron.defaults)
 }
 
 exports.unseal = async value => {
-  return await Iron.unseal(value, process.env.SESSION_KEY, Iron.defaults)
+  return await Iron.unseal(value, process.env.SESSION_KEY + '_encrypt', Iron.defaults)
 }
