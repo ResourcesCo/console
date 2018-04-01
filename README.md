@@ -93,4 +93,6 @@ in with GitHub. When you're signed in, you can make an HTTP request.
 travis encrypt SESSION_KEY=$SESSION_KEY --add env.global
 travis encrypt GITHUB_CLIENT_SECRET=$GITHUB_CLIENT_SECRET --add env.global
 travis encrypt AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --add env.global
+travis encrypt TEST1_GITHUB_PASSWORD=$TEST1_GITHUB_PASSWORD --add env.global
+travis encrypt TEST2_GITHUB_PASSWORD=$TEST2_GITHUB_PASSWORD --add env.global
 ```

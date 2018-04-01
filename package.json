@@ -5,7 +5,7 @@
     "dev-debug": "node --inspect server",
     "build": "next build",
     "start": "NODE_ENV=production node server",
-    "test": "jest \\.test.js"
+    "test": "jest \\.test.js -t 'is authorized' && jest \\.test.js -t 'is not authorized'"
   },
   "dependencies": {
     "apollo-client-preset": "^1.0.6",
@@ -13,7 +13,7 @@
     "axios": "^0.17.1",
     "body-parser": "^1.18.2",
     "classnames": "^2.2.5",
-    "codemirror": "^5.33.0",
+    "codemirror": "^5.36.0",
     "cookie-session": "^2.0.0-beta.3",
     "express": "^4.16.2",
     "express-graphql": "^0.6.11",

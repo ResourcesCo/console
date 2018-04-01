@@ -34,7 +34,7 @@ exports.randomState = () => {
 exports.authUrl = state => {
   return oauth.authorizationCode.authorizeURL({
     redirect_uri: `${process.env.BASE_URL}/auth/github/callback`,
-    scope: 'read:org',
+    scope: '',
     state
   })
 }

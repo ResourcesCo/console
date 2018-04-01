@@ -8,7 +8,7 @@ export default class App extends Component {
   render() {
     return (
       <div>
-        <button onClick={this.signIn}>Sign In with GitHub</button>
+        <button className="sign-in" onClick={this.signIn}>Sign In with GitHub</button>
         <style jsx global>{`
           html, body {
             background-color: #222;
