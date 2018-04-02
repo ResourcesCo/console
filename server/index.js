@@ -6,7 +6,7 @@ const express = require('express')
 const next = require('next')
 const cookieSession = require('cookie-session')
 
-const port = parseInt(process.env.PORT, 10) || 3000
+const port = parseInt(process.env.PORT, 10) || 4567
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev, quiet: true })
 
@@ -21,10 +21,10 @@ async function init() {
 
   const server = express()
 
-  checkEnv('CONSOLE_SESSION_KEY', 64)
+  checkEnv('SESSION_KEY', 64)
   server.use(cookieSession({
     name: 'resources-console',
-    keys: [process.env.CONSOLE_SESSION_KEY],
+    keys: [process.env.SESSION_KEY],
     maxAge: 14 * 24 * 60 * 60 * 1000
   }))
 
@@ -44,21 +44,21 @@ async function init() {
 
     let token
     try {
-      token = await auth.getToken({code})
+      token = await auth.getToken(code)
     } catch (e) {
       console.error('Error getting token:', e)
       return res.status(401).json({error: 'Authentication failed.'})
     }
 
-    let username
+    let user
     try {
-      username = await auth.getUsername({token})
+      user = await auth.getUser(token)
     } catch (e) {
-      console.error('Error getting token:', e)
+      console.error('Error getting user profile:', e)
       return res.status(401).json({error: 'Authentication failed.'})
     }
 
-    req.session.username = username
+    req.session.user = user
     req.session.accessToken = await auth.seal(token)
 
     res.redirect('/')
@@ -69,8 +69,21 @@ async function init() {
     res.status(200).json({})
   })
 
-  server.get('/', (req, res) => {
-    return app.render(req, res, '/', {id: 'none'})
+  server.get('/', async (req, res) => {
+    let loggedIn = false
+    try {
+      loggedIn = await auth.checkAuth(req.session.accessToken)
+    } catch (e) {
+      loggedIn = false
+      console.log('Error checking login:', e)
+    }
+
+    if (!loggedIn) {
+      app.render(req, res, '/login')
+      return
+    }
+
+    app.render(req, res, '/', {id: 'none'})
   })
 
   server.get('/requests/:id', (req, res) => {

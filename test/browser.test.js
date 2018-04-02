@@ -1,9 +1,10 @@
+require('now-env')
 const {join} = require('path')
 const {spawn, execSync} = require('child_process')
 const fkill = require('fkill')
 const wd = require('wd')
 
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 25000
 
 function waitFor(timeout) {
   return new Promise((resolve, reject) => {
@@ -16,8 +17,7 @@ const cwd = join(__dirname, '..')
 const env = {
   ...process.env,
   NODE_ENV: 'production',
-  CONSOLE_CONFIG_S3_BUCKET: 'resourcesco-console-config',
-  CONSOLE_DATA_S3_BUCKET: 'resourcesco-console-data'
+  AWS_S3_BUCKET: 'resourcesco-console-data'
 }
 
 async function startApp() {
@@ -38,9 +38,13 @@ describe('Home', () => {
     await browser.init({browserName: 'chrome'})
   })
   afterAll(async () => {
-    await browser.quit()
     try {
       fkill(serverPid).then(() => null).catch(err => null)
+    } catch (err) {
+      // ignore
+    }
+    await browser.quit()
+    try {
       fkill(chromedriver.pid).then(() => null).catch(err => null)
       execSync('killall chromedriver', { stdio: 'ignore' })
     } catch (err) {
@@ -48,13 +52,65 @@ describe('Home', () => {
     }
   })
 
-  it('opens the site', async () => {
+  it('is authorized', async () => {
     await waitFor(200)
-    await browser.get('http://localhost:3000/')
+    await browser.get('http://localhost:4567/')
     await waitFor(800)
+
+    const button = await browser.elementByCss('button.sign-in')
+    const buttonText = await button.text()
+    expect(buttonText).toMatch(/sign in with github/i)
+    await button.click()
+    await waitFor(500)
+
+    const usernameInput = await browser.elementByCss('[name=login]')
+    await browser.type(usernameInput, process.env.TEST1_GITHUB_USERNAME)
+    const passwordInput = await browser.elementByCss('[name=password]')
+    await browser.type(passwordInput, process.env.TEST1_GITHUB_PASSWORD)
+    const submitButton = await browser.elementByCss('[type=submit]')
+    await submitButton.click()
+    await waitFor(500)
+
+    const authorizeButton = await browser.elementByCssIfExists('[name=authorize]')
+    if (authorizeButton) {
+      await waitFor(1000)
+      await authorizeButton.click()
+      await waitFor(500)
+    }
 
     const h1 = await browser.elementByCss('.section-bar')
     const headerText = await h1.text()
     expect(headerText).toMatch(/output/i)
+  })
+
+  it('is not authorized', async () => {
+    await waitFor(200)
+    await browser.get('http://localhost:4567/')
+    await waitFor(800)
+
+    const button = await browser.elementByCss('button.sign-in')
+    const buttonText = await button.text()
+    expect(buttonText).toMatch(/sign in with github/i)
+    await button.click()
+    await waitFor(500)
+
+    const usernameInput = await browser.elementByCss('[name=login]')
+    await browser.type(usernameInput, process.env.TEST2_GITHUB_USERNAME)
+    const passwordInput = await browser.elementByCss('[name=password]')
+    await browser.type(passwordInput, process.env.TEST2_GITHUB_PASSWORD)
+    const submitButton = await browser.elementByCss('[type=submit]')
+    await submitButton.click()
+    await waitFor(500)
+
+    const authorizeButton = await browser.elementByCssIfExists('[name=authorize]')
+    if (authorizeButton) {
+      await waitFor(1000)
+      await authorizeButton.click()
+      await waitFor(500)
+    }
+
+    const button2 = await browser.elementByCss('button.sign-in')
+    const buttonText2 = await button2.text()
+    expect(buttonText2).toMatch(/sign in with github/i)
   })
 })
