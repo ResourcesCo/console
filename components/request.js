@@ -4,9 +4,9 @@ import FunctionForm from './function-form'
 import OutputForm from './output-form'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
-import shortid from 'shortid'
+import { generate } from 'bson-objectid'
 
-class App extends Component {
+class Request extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -37,7 +37,7 @@ class App extends Component {
 
   onSubmit = code => {
     const variables = {
-      id: shortid(),
+      id: generate(),
       input: code,
       functionId: this.currentFunction.id
     }
@@ -48,14 +48,16 @@ class App extends Component {
   }
 
   get output() {
+    if (!this.props.data) return null;
     if (!this.props.data.request) return null;
     if (typeof this.props.data.request.output !== 'string') return null;
     return this.props.data.request.output;
   }
 
   get loading() {
+    if (!this.props.data) return false;
     if (!this.props.data.request) return false;
-    const createdRequest = (this.props.data.request.id !== 'none')
+    const createdRequest = (this.props.data.request && this.props.data.request.id)
     return (createdRequest && this.output === null)
   }
 
@@ -102,7 +104,7 @@ class App extends Component {
   }
 }
 
-const Request = gql`
+const GetRequest = gql`
   query($id: ID!) {
     request(id: $id) {
       id,
@@ -128,13 +130,16 @@ const CreateRequest = gql`
   }
 `
 
-const AppWithData = compose(
+const RequestWithData = compose(
   graphql(CreateRequest),
-  graphql(Request, {
+  graphql(GetRequest, {
+    skip: ({requestId}) => {
+      return !requestId
+    },
     options: ({requestId}) => ({
       variables: { id: requestId }
     })
   })
-)(App)
+)(Request)
 
-export default AppWithData
+export default RequestWithData

@@ -83,7 +83,7 @@ async function init() {
       return
     }
 
-    app.render(req, res, '/', {id: 'none'})
+    app.render(req, res, '/', {})
   })
 
   server.get('/requests/:id', (req, res) => {

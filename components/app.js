@@ -6,10 +6,6 @@ import Request from './request'
 import Router from 'next/router'
 
 class App extends Component {
-  constructor(props) {
-    super(props)
-  }
-
   handleChange = ({requestId}) => {
     Router.push({ pathname: '/', query: { id: requestId } },
                 `/requests/${requestId}`,
