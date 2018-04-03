@@ -75,8 +75,7 @@ Request.getById = async (id) => {
     params: {
       Bucket: process.env.AWS_S3_BUCKET,
       Key: `requests/${id}.json`
-    },
-    envPrefix: 'CONSOLE'
+    }
   }
   const response = await aws(request, {env: process.env})
   const data = JSON.parse(response.Body)
