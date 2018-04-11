@@ -90,4 +90,8 @@ Request.findById = async (id) => {
   return result
 }
 
+Request.list = async ({date}) => {
+  return []
+}
+
 module.exports = Request

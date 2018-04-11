@@ -48,7 +48,7 @@ class FunctionForm extends Component {
           </div>
         </div>
         <SendBar 
-          allFunctions={this.props.allFunctions}
+          functions={this.props.functions}
           currentFunction={this.props.currentFunction}
           loading={this.props.loading}
           onSendClick={this.sendClicked}

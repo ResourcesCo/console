@@ -17,15 +17,15 @@ class Request extends Component {
 
   get currentFunction() {
     if (this.state.currentFunctionId) {
-      return this.allFunctions.filter(fn => fn.id === this.state.currentFunctionId)[0]
+      return this.functions.filter(fn => fn.id === this.state.currentFunctionId)[0]
     } else {
-      return this.allFunctions[0]
+      return this.functions[0]
     }
   }
 
-  get allFunctions() {
-    if (this.props.functions.allFunctions) {
-      return this.props.functions.allFunctions
+  get functions() {
+    if (this.props.functions.functions) {
+      return this.props.functions.functions
     } else {
       return []
     }
@@ -69,7 +69,7 @@ class Request extends Component {
         <div className="function">
           <FunctionForm
             loading={this.loading}
-            allFunctions={this.allFunctions}
+            functions={this.functions}
             currentFunction={this.currentFunction}
             onFunctionSelect={this.onFunctionSelect}
             onSubmit={this.onSubmit}

@@ -4,7 +4,7 @@ const {join, resolve} = require('path')
 class ApiFunction {
 }
 
-ApiFunction.all = () => {
+ApiFunction.list = () => {
   return functions
 }
 

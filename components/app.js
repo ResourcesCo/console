@@ -23,9 +23,9 @@ class App extends Component {
   }
 }
 
-const AllFunctions = gql`
+const ListFunctions = gql`
   query {
-    allFunctions {
+    functions {
       id,
       name,
       source,
@@ -34,6 +34,6 @@ const AllFunctions = gql`
   }
 `
 
-const AppWithData = graphql(AllFunctions, { name: 'functions' })(App)
+const AppWithData = graphql(ListFunctions, { name: 'functions' })(App)
 
 export default AppWithData

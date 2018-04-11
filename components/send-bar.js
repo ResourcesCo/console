@@ -26,7 +26,7 @@ class SendBar extends Component {
       <div className={classNames('send-bar', {loading: this.props.loading})}>
         <span className="function-select">
           <select value={this.props.currentFunction && this.props.currentFunction.id} onChange={this.onSelect}>
-            {this.props.allFunctions.map(fn => (
+            {this.props.functions.map(fn => (
               <option key={fn.id} value={fn.id}>{fn.name}</option>
             ))}
           </select>

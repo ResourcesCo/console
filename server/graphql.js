@@ -35,10 +35,10 @@ const queryType = new graphql.GraphQLObjectType({
         return ApiFunction.findById(id)
       }
     },
-    allFunctions: {
+    functions: {
       type: new graphql.GraphQLList(functionType),
       resolve: (_, {id}) => {
-        return ApiFunction.all()
+        return ApiFunction.list()
       }
     },
     request: {
@@ -49,6 +49,12 @@ const queryType = new graphql.GraphQLObjectType({
       resolve: async (_, {id}) => {
         const request = await Request.findById(id)
         return request ? request.toFlatJSON() : { id }
+      }
+    },
+    requests: {
+      type: new graphql.GraphQLList(functionType),
+      resolve: (_, {id}) => {
+        return Request.list()
       }
     }
   }
