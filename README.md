@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/resources/console.svg?branch=master)](https://travis-ci.org/resourcesco/console) [![with-coffee](https://img.shields.io/badge/made%20with-%E2%98%95%EF%B8%8Fcoffee-yellow.svg)](https://github.com/morajabi/with-coffee)
+[![Build Status](https://travis-ci.org/resourcesco/console.svg?branch=master)](https://travis-ci.org/resourcesco/console) [![with-coffee](https://img.shields.io/badge/made%20with-%E2%98%95%EF%B8%8Fcoffee-yellow.svg)](https://github.com/morajabi/with-coffee)
 
 # resources.co API console
 
