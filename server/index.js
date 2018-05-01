@@ -23,7 +23,7 @@ async function init() {
 
   checkEnv('SESSION_KEY', 64)
   server.use(cookieSession({
-    name: 'resources-console',
+    name: 'resourcesco-console',
     keys: [process.env.SESSION_KEY],
     maxAge: 14 * 24 * 60 * 60 * 1000
   }))

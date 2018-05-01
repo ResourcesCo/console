@@ -55,7 +55,7 @@ exports.getUser = async (token) => {
     "headers": {
       "Authorization": `Bearer ${token}`,
       "Accept": "application/json",
-      "User-Agent": "resources"
+      "User-Agent": "resourcesco-console"
     }
   }
   const response = await http(request)
