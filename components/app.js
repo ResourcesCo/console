@@ -14,11 +14,38 @@ class App extends Component {
 
   render() {
     return (
-      <Request
-        functions={this.props.functions}
-        requestId={this.props.requestId}
-        onChange={this.handleChange}
-      />
+      <div className="app">
+        <div className="sidePane">
+          Side Pane Here
+        </div>
+        <div className="mainPane">
+          <div className="innerMainPane">
+            <Request
+              functions={this.props.functions}
+              requestId={this.props.requestId}
+              onChange={this.handleChange}
+            />
+          </div>
+        </div>
+        <style jsx>{`
+          .app {
+            display: flex;
+          }
+          .sidePane {
+            width: 30%;
+            background-color: rgb(38, 50, 56);
+            border-right: 2px solid #000;
+            padding: 5px;
+            color: #ddd;
+          }
+          .mainPane {
+            width: 70%;
+          }
+          .innerMainPane {
+            position: relative;
+          }
+        `}</style>
+      </div>
     )
   }
 }
