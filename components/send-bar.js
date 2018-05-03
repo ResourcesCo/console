@@ -3,8 +3,6 @@ import dynamic from 'next/dynamic'
 const Code = dynamic(import('./code-with-codemirror'), {ssr: false})
 import Spinner from 'react-svg-spinner'
 import SendIcon from 'react-icons/lib/md/send'
-import { graphql } from 'react-apollo'
-import gql from 'graphql-tag'
 import classNames from 'classnames'
 
 class SendBar extends Component {

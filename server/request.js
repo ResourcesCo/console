@@ -90,8 +90,21 @@ Request.findById = async (id) => {
   return result
 }
 
-Request.list = async ({date}) => {
-  return []
+Request.list = async () => {
+  const request = {
+    service: 's3',
+    method: 'listObjectsV2',
+    params: {
+      Bucket: process.env.AWS_S3_BUCKET,
+      MaxKeys: 100,
+      Prefix: 'requests',
+      Delimiter: 'requests/'
+    }
+  }
+  const result = await aws(request, {env: process.env})
+  const formattedResult = result.Contents
+    .map(v => ({id: v.Key.match(/requests\/(.*)\.json/)[1]}))
+  return formattedResult
 }
 
 module.exports = Request

@@ -23,6 +23,13 @@ const requestType = new graphql.GraphQLObjectType({
   }
 })
 
+const requestSummaryType = new graphql.GraphQLObjectType({
+  name: 'RequestSummary',
+  fields: {
+    id: { type: graphql.GraphQLID }
+  }
+})
+
 const queryType = new graphql.GraphQLObjectType({
   name: 'Query',
   fields: {
@@ -37,8 +44,8 @@ const queryType = new graphql.GraphQLObjectType({
     },
     functions: {
       type: new graphql.GraphQLList(functionType),
-      resolve: (_, {id}) => {
-        return ApiFunction.list()
+      resolve: async (_, {id}) => {
+        return await ApiFunction.list()
       }
     },
     request: {
@@ -52,9 +59,9 @@ const queryType = new graphql.GraphQLObjectType({
       }
     },
     requests: {
-      type: new graphql.GraphQLList(functionType),
-      resolve: (_, {id}) => {
-        return Request.list()
+      type: new graphql.GraphQLList(requestSummaryType),
+      resolve: async (_) => {
+        return await Request.list()
       }
     }
   }

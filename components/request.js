@@ -1,5 +1,4 @@
 import { Component } from 'react'
-import Head from './head'
 import FunctionForm from './function-form'
 import OutputForm from './output-form'
 import { graphql, compose } from 'react-apollo'
@@ -63,9 +62,7 @@ class Request extends Component {
 
   render() {
     return (
-      <div className="page">
-        <Head loggedIn={true} />
-        
+      <div className="page">        
         <div className="function">
           <FunctionForm
             loading={this.loading}

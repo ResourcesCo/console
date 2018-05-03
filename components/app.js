@@ -3,6 +3,7 @@ import Head from './head'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 import Request from './request'
+import RequestList from './request-list'
 import Router from 'next/router'
 
 class App extends Component {
@@ -15,8 +16,9 @@ class App extends Component {
   render() {
     return (
       <div className="app">
+        <Head loggedIn={true} />
         <div className="sidePane">
-          Side Pane Here
+          <RequestList />
         </div>
         <div className="mainPane">
           <div className="innerMainPane">
