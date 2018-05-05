@@ -1,8 +1,10 @@
 const ApiFunction = require('./api-function')
+const lruCache = require('lru-cache')
 const aws = ApiFunction.findById('aws').fn
 
-const pendingRequests = {}
-const cachedRequests = []
+const pendingRequestIds = {}
+const recentRequestCache = lruCache({max: 5})
+const recentRequestSummaryCache = lruCache({max: 500})
 
 class Request {
   constructor({id, input, functionId, output}) {
@@ -13,7 +15,8 @@ class Request {
   }
 
   async send() {
-    pendingRequests[this.id] = true
+    // TODO: write unique summary files w/ underscore's debounce + maxWait
+    pendingRequestIds[this.id] = true
     const fn = ApiFunction.findById(this.functionId).fn
     try {
       this.output = await fn(this.input, {env: process.env})
@@ -32,8 +35,8 @@ class Request {
         saveErrorStack: err.stack.split("\n")
       }
     }
-    cachedRequests.push(this)
-    delete pendingRequests[this.id]
+    recentRequestCache.set(this.id, this)
+    delete pendingRequestIds[this.id]
     return this.output
   }
 
@@ -83,22 +86,23 @@ Request.getById = async (id) => {
 }
 
 Request.findById = async (id) => {
-  let result = cachedRequests.filter(request => request.id === id)[0]
-  if (! result && id && id !== 'none' && !(id in pendingRequests)) {
+  let result = recentRequestCache.get(id)
+  if (! result && id && !(id in pendingRequestIds)) {
     result = await Request.getById(id)
   }
   return result
 }
 
-Request.list = async () => {
+Request.list = async (before = null, count = 100) => {
+  // TODO: read unique logs first when putting together newest page
   const request = {
     service: 's3',
     method: 'listObjectsV2',
     params: {
       Bucket: process.env.AWS_S3_BUCKET,
       MaxKeys: 100,
-      Prefix: 'requests',
-      Delimiter: 'requests/'
+      Prefix: 'requests/',
+      Delimiter: '/'
     }
   }
   const result = await aws(request, {env: process.env})
