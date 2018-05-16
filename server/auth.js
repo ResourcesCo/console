@@ -69,7 +69,7 @@ exports.getUser = async (token) => {
   }
 }
 
-exports.checkAuth = async (encryptedToken = null) => {
+exports.getAuth = async (encryptedToken = null) => {
   if (!encryptedToken) {
     return false
   }
@@ -84,9 +84,19 @@ exports.checkAuth = async (encryptedToken = null) => {
   const matchedUsers = allowedUsers.filter(iterUser => {
     return iterUser.id === user.id && iterUser.username === user.username
   })
-  const result = matchedUsers.length > 0
+  const authorized = matchedUsers.length > 0
+  const result = {
+    authorized,
+    user
+  }
+
   authCache.set(encryptedToken, result)
   return result
+}
+
+exports.checkAuth = async (encryptedToken = null) => {
+  const result = await exports.getAuth(encryptedToken);
+  return result.authorized;
 }
 
 exports.seal = async value => {

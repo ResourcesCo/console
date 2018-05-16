@@ -13,10 +13,19 @@ const functionType = new graphql.GraphQLObjectType({
   }
 })
 
+const userType = new graphql.GraphQLObjectType({
+  name: 'User',
+  fields: {
+    id: { type: graphql.GraphQLID },
+    name: { type: graphql.GraphQLString }
+  }
+})
+
 const requestType = new graphql.GraphQLObjectType({
   name: 'Request',
   fields: {
     id: { type: graphql.GraphQLID },
+    createdBy: { type: userType },
     functionId: { type: graphql.GraphQLString },
     input: { type: graphql.GraphQLString },
     output: { type: graphql.GraphQLString }
@@ -83,10 +92,14 @@ const mutationType = new graphql.GraphQLObjectType({
         input: { type: graphql.GraphQLString },
         functionId: { type: graphql.GraphQLString }
       },
-      resolve: async (_, {id, input, functionId}) => {
+      resolve: async (_, {id, input, functionId}, req) => {
         const parsedInput = JSON.parse(input)
         const request = new Request({
           id,
+          createdBy: {
+            id: req.user.id,
+            username: req.user.username
+          },
           input: parsedInput,
           functionId
         })

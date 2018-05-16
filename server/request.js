@@ -7,11 +7,28 @@ const recentRequestCache = lruCache({max: 5})
 const recentRequestSummaryCache = lruCache({max: 500})
 
 class Request {
-  constructor({id, input, functionId, output}) {
+  constructor({id, createdBy, input, functionId, output}) {
     this.id = id
+    this.createdBy = createdBy
     this.input = input
     this.functionId = functionId
     this.output = output
+  }
+
+  summarize() {
+    if (this.functionId === 'http') {
+      return {
+        user: this.createdBy.username,
+        method: this.input.method,
+        url: this.input.url
+      }
+    } else if (this.functionId === 'aws') {
+      return {
+        user: this.createdBy.username,
+        service: this.input.service,
+        method: this.input.method
+      }
+    }
   }
 
   async send() {
@@ -43,6 +60,7 @@ class Request {
   async save() {
     const data = {
       id: this.id,
+      createdBy: this.createdBy,
       input: this.input,
       functionId: this.functionId,
       input: this.input,
@@ -64,6 +82,7 @@ class Request {
   toFlatJSON() {
     return {
       id: this.id,
+      createdBy: this.createdBy,
       input: JSON.stringify(this.input, null, 2),
       functionId: this.functionId,
       output: JSON.stringify(this.output, null, 2)
