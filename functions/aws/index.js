@@ -50,6 +50,9 @@ const getServiceParams = ({serviceParams, envPrefix, env}) => {
     const envPrefixMessage = envPrefix && ` with envPrefix: '${envPrefix}'`
     throw new Error(`Cannot not find AWS credentials${envPrefixMessage || ''}`)
   }
+  if ('endpoint' in res) {
+    res.s3ForcePathStyle = true
+  }
   return res
 }
 
