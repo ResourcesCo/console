@@ -1,4 +1,5 @@
 {
+  "client": "aws",
   "service": "s3",
   "method": "putObject",
   "params": {

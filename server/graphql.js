@@ -35,7 +35,8 @@ const requestType = new graphql.GraphQLObjectType({
 const requestSummaryType = new graphql.GraphQLObjectType({
   name: 'RequestSummary',
   fields: {
-    id: { type: graphql.GraphQLID }
+    id: { type: graphql.GraphQLID },
+    data: { type: graphql.GraphQLString }
   }
 })
 
@@ -70,7 +71,8 @@ const queryType = new graphql.GraphQLObjectType({
     requests: {
       type: new graphql.GraphQLList(requestSummaryType),
       resolve: async (_) => {
-        return await Request.list()
+        const viewDocs = await Request.list()
+        return viewDocs.map(({_id, ...rest}) => ({id: _id, data: JSON.stringify(rest)}))
       }
     }
   }

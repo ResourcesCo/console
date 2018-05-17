@@ -1,4 +1,5 @@
 {
+  "client": "http",
   "method": "GET",
   "url": "https://api.github.com/users/crockford",
   "headers": {

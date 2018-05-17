@@ -5,21 +5,25 @@ import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 import { generate } from 'bson-objectid'
 
-class Request extends Component {
+class RequestView extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      currentFunctionId: null,
-      loading: false
+      loading: false,
+      clientType: undefined
+    }
+  }
+
+  get clientType() {
+    if (this.state.clientType) {
+      return this.state.clientType
+    } else {
+      return 'http'
     }
   }
 
   get currentFunction() {
-    if (this.state.currentFunctionId) {
-      return this.functions.filter(fn => fn.id === this.state.currentFunctionId)[0]
-    } else {
-      return this.functions[0]
-    }
+    return this.functions.filter(fn => fn.id === this.clientType)[0]
   }
 
   get functions() {
@@ -28,10 +32,6 @@ class Request extends Component {
     } else {
       return []
     }
-  }
-
-  onFunctionSelect = functionId => {
-    this.setState({currentFunctionId: functionId})
   }
 
   onSubmit = code => {
@@ -46,29 +46,37 @@ class Request extends Component {
     })
   }
 
+  handleInputChange = ({clientType}) => {
+    this.setState({clientType})
+  }
+
+  get input() {
+    if (this.props.request && typeof this.props.request.input === 'string') {
+      return this.props.request.input;
+    }
+  }
+
   get output() {
-    if (!this.props.data) return null;
-    if (!this.props.data.request) return null;
-    if (typeof this.props.data.request.output !== 'string') return null;
-    return this.props.data.request.output;
+    if (this.props.request && typeof this.props.request.output === 'string') {
+      return this.props.request.output;
+    }
   }
 
   get loading() {
-    if (!this.props.data) return false;
-    if (!this.props.data.request) return false;
-    const createdRequest = (this.props.data.request && this.props.data.request.id)
+    if (!this.props.request) return false;
+    const createdRequest = (this.props.request && this.props.request.id)
     return (createdRequest && this.output === null)
   }
 
   render() {
     return (
-      <div className="page">        
+      <div className="page">
         <div className="function">
           <FunctionForm
             loading={this.loading}
-            functions={this.functions}
-            currentFunction={this.currentFunction}
-            onFunctionSelect={this.onFunctionSelect}
+            example={this.functions[0] && this.functions[0].example}
+            input={this.input}
+            onChange={this.handleInputChange}
             onSubmit={this.onSubmit}
           />
         </div>
@@ -79,7 +87,7 @@ class Request extends Component {
         <style jsx>{`
           .page {
             height: 100vh;
-            width: 100vw;
+            width: 100%;
           }
           .function {
             position: absolute;
@@ -101,17 +109,6 @@ class Request extends Component {
   }
 }
 
-const GetRequest = gql`
-  query($id: ID!) {
-    request(id: $id) {
-      id,
-      functionId,
-      input,
-      output
-    }
-  }
-`
-
 const CreateRequest = gql`
   mutation createRequest($id: ID!, $input: String!, $functionId: String!) {
     createRequest(
@@ -127,16 +124,8 @@ const CreateRequest = gql`
   }
 `
 
-const RequestWithData = compose(
-  graphql(CreateRequest),
-  graphql(GetRequest, {
-    skip: ({requestId}) => {
-      return !requestId
-    },
-    options: ({requestId}) => ({
-      variables: { id: requestId }
-    })
-  })
-)(Request)
+const RequestViewWithData = compose(
+  graphql(CreateRequest)
+)(RequestView)
 
-export default RequestWithData
+export default RequestViewWithData

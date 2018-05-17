@@ -2,7 +2,7 @@ import { Component } from 'react'
 import Head from './head'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
-import Request from './request'
+import RequestView from './request-view'
 import RequestList from './request-list'
 import Router from 'next/router'
 
@@ -18,13 +18,13 @@ class App extends Component {
       <div className="app">
         <Head loggedIn={true} />
         <div className="sidePane">
-          <RequestList />
+          <RequestList onChange={this.handleChange} />
         </div>
         <div className="mainPane">
           <div className="innerMainPane">
-            <Request
+            <RequestView
               functions={this.props.functions}
-              requestId={this.props.requestId}
+              request={this.props.data ? this.props.data.request : {}}
               onChange={this.handleChange}
             />
           </div>
@@ -63,6 +63,27 @@ const ListFunctions = gql`
   }
 `
 
-const AppWithData = graphql(ListFunctions, { name: 'functions' })(App)
+const GetRequest = gql`
+  query($id: ID!) {
+    request(id: $id) {
+      id,
+      functionId,
+      input,
+      output
+    }
+  }
+`
+
+const AppWithData = compose(
+  graphql(ListFunctions, { name: 'functions' }),
+  graphql(GetRequest, {
+    skip: ({requestId}) => {
+      return !requestId
+    },
+    options: ({requestId}) => ({
+      variables: { id: requestId }
+    })
+  })
+)(App)
 
 export default AppWithData

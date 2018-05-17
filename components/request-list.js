@@ -1,21 +1,38 @@
 import { Component } from 'react'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
+import ObjectID from 'bson-objectid'
 
 class RequestList extends Component {
+  get requests() {
+    const rawData = this.props.data.requests ? this.props.data.requests : []
+    return rawData.map(({id, data}) => {
+      return {
+        id,
+        data: JSON.parse(data),
+        created: ObjectID(id).getTimestamp()
+      }
+    })
+  }
+
   render() {
-    const requests = this.props.data.requests ? this.props.data.requests : []
+    
     return (
       <div className="list">
         {
-          requests.map(({id}) => (<div className="item" key={id}>
-            {id}
-          </div>))
+          this.requests.map(({id, created}) => (
+            <div onClick={() => this.props.onChange({requestId: id})} className="item" key={id}>
+              {`${created}`}
+            </div>
+          ))
         }
 
         <style jsx>{`
+          .list {
+            cursor: pointer;
+          }
           .item {
-            color: red;
+            color: white;
           }
         `}</style>
       </div>
@@ -26,7 +43,8 @@ class RequestList extends Component {
 const ListRequests = gql`
   query {
     requests {
-      id
+      id,
+      data
     }
   }
 `

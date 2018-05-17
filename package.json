@@ -25,6 +25,7 @@
     "graphql-tag": "^2.6.1",
     "iron": "^5.0.4",
     "isomorphic-fetch": "^2.2.1",
+    "lodash": "^4.17.10",
     "lru-cache": "^4.1.2",
     "next": "^5.1.0",
     "react": "^16.2.0",

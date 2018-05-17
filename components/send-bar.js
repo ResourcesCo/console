@@ -15,20 +15,9 @@ class SendBar extends Component {
     return false
   }
 
-  onSelect = event => {
-    this.props.onFunctionSelect(event.target.value)
-  }
-
   render() {
     return (
       <div className={classNames('send-bar', {loading: this.props.loading})}>
-        <span className="function-select">
-          <select value={this.props.currentFunction && this.props.currentFunction.id} onChange={this.onSelect}>
-            {this.props.functions.map(fn => (
-              <option key={fn.id} value={fn.id}>{fn.name}</option>
-            ))}
-          </select>
-        </span>
         <span className="spinner">
           <Spinner size="1em" color="white" />
         </span>
@@ -43,16 +32,6 @@ class SendBar extends Component {
             font-size: 200%;
             padding: 2px 5px;
             border: none;
-          }
-          .send-bar .function-select {
-            float: left;
-            height: 32px;
-            display: inline-block;
-          }
-          .send-bar .function-select select {
-            vertical-align: middle;
-            margin-top: -9px;
-            margin-left: 3px;
           }
           .send-bar .spinner :global(svg) {
             display: none;
