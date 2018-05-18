@@ -9,7 +9,7 @@ class RequestView extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      loading: false,
+      loading: undefined,
       clientType: undefined
     }
   }
@@ -40,6 +40,7 @@ class RequestView extends Component {
       input: code,
       functionId: this.currentFunction.id
     }
+    this.setState({loading: variables.id})
     this.props.onChange({requestId: variables.id})
     this.props.mutate({
       variables
@@ -63,9 +64,11 @@ class RequestView extends Component {
   }
 
   get loading() {
-    if (!this.props.request) return false;
-    const createdRequest = (this.props.request && this.props.request.id)
-    return (createdRequest && this.output === null)
+    return (
+      this.props.request.id &&
+      this.props.request.id === this.state.loading &&
+      !this.props.request.output
+    )
   }
 
   render() {

@@ -6,13 +6,21 @@ import ObjectID from 'bson-objectid'
 class RequestList extends Component {
   get requests() {
     const rawData = this.props.data.requests ? this.props.data.requests : []
-    return rawData.map(({id, data}) => {
+    const requests = rawData.map(({id, data}) => {
       return {
         id,
         data: JSON.parse(data),
         created: ObjectID(id).getTimestamp()
       }
-    })
+    }).reverse()
+    const request = this.props.request
+    if (request && request.id && !requests.map(r => r.id).includes(request.id)) {
+      requests.unshift({
+        id: request.id,
+        created: ObjectID(request.id).getTimestamp()
+      })
+    }
+    return requests
   }
 
   render() {

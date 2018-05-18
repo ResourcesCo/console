@@ -13,18 +13,22 @@ class App extends Component {
                 { shallow: true })
   }
 
+  get request() {
+    return (this.props.data && this.props.data.request) || {}
+  }
+
   render() {
     return (
       <div className="app">
         <Head loggedIn={true} />
         <div className="sidePane">
-          <RequestList onChange={this.handleChange} />
+          <RequestList request={this.request} onChange={this.handleChange} />
         </div>
         <div className="mainPane">
           <div className="innerMainPane">
             <RequestView
               functions={this.props.functions}
-              request={this.props.data ? this.props.data.request : {}}
+              request={this.request}
               onChange={this.handleChange}
             />
           </div>

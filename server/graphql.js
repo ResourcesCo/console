@@ -70,6 +70,9 @@ const queryType = new graphql.GraphQLObjectType({
     },
     requests: {
       type: new graphql.GraphQLList(requestSummaryType),
+      args: {
+        refresh: { type: graphql.GraphQLString }
+      },
       resolve: async (_) => {
         const viewDocs = await Request.list()
         return viewDocs.map(({_id, ...rest}) => ({id: _id, data: JSON.stringify(rest)}))
