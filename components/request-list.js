@@ -3,9 +3,9 @@ import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 import ObjectID from 'bson-objectid'
 
-class RequestList extends Component {
+export default class RequestList extends Component {
   get requests() {
-    const rawData = this.props.data.requests ? this.props.data.requests : []
+    const rawData = this.props.requests.requests ? this.props.requests.requests : []
     const requests = rawData.map(({id, data}) => {
       return {
         id,
@@ -47,16 +47,3 @@ class RequestList extends Component {
     )
   }
 }
-
-const ListRequests = gql`
-  query {
-    requests {
-      id,
-      data
-    }
-  }
-`
-
-const RequestListWithData = graphql(ListRequests)(RequestList)
-
-export default RequestListWithData

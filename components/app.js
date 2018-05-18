@@ -22,7 +22,11 @@ class App extends Component {
       <div className="app">
         <Head loggedIn={true} />
         <div className="sidePane">
-          <RequestList request={this.request} onChange={this.handleChange} />
+          <RequestList 
+            requests={this.props.requests} 
+            request={this.request} 
+            onChange={this.handleChange} 
+          />
         </div>
         <div className="mainPane">
           <div className="innerMainPane">
@@ -67,6 +71,15 @@ const ListFunctions = gql`
   }
 `
 
+const ListRequests = gql`
+  query($refresh: String) {
+    requests(refresh: $refresh) {
+      id,
+      data
+    }
+  }
+`
+
 const GetRequest = gql`
   query($id: ID!) {
     request(id: $id) {
@@ -80,6 +93,12 @@ const GetRequest = gql`
 
 const AppWithData = compose(
   graphql(ListFunctions, { name: 'functions' }),
+  graphql(ListRequests, {
+    name: 'requests',
+    options: ({requestId}) => ({
+      variables: { refresh: requestId }
+    })
+  }),
   graphql(GetRequest, {
     skip: ({requestId}) => {
       return !requestId
