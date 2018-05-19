@@ -5,8 +5,16 @@ import gql from 'graphql-tag'
 import RequestView from './request-view'
 import RequestList from './request-list'
 import Router from 'next/router'
+import ObjectID from 'bson-objectid'
 
 class App extends Component {
+  constructor() {
+    super()
+    this.state = {
+      loading: undefined
+    }
+  }
+
   handleChange = ({requestId}) => {
     Router.push({ pathname: '/', query: { id: requestId } },
                 `/requests/${requestId}`,
@@ -15,6 +23,19 @@ class App extends Component {
 
   get request() {
     return (this.props.data && this.props.data.request) || {}
+  }
+
+  handleSubmit = ({code, functionId}) => {
+    const variables = {
+      id: ObjectID().toString(),
+      input: code,
+      functionId
+    }
+    this.setState({loading: variables.id})
+    this.handleChange({requestId: variables.id})
+    this.props.createRequest({
+      variables
+    })
   }
 
   render() {
@@ -33,7 +54,9 @@ class App extends Component {
             <RequestView
               functions={this.props.functions}
               request={this.request}
+              loading={this.state.loading}
               onChange={this.handleChange}
+              onSubmit={this.handleSubmit}
             />
           </div>
         </div>
@@ -72,8 +95,8 @@ const ListFunctions = gql`
 `
 
 const ListRequests = gql`
-  query($refresh: String) {
-    requests(refresh: $refresh) {
+  query {
+    requests {
       id,
       data
     }
@@ -91,14 +114,30 @@ const GetRequest = gql`
   }
 `
 
+const CreateRequest = gql`
+  mutation createRequest($id: ID!, $input: String!, $functionId: String!) {
+    createRequest(
+      id: $id,
+      input: $input,
+      functionId: $functionId
+    ) {
+      id,
+      input,
+      functionId,
+      output
+    }
+  }
+`
+
 const AppWithData = compose(
   graphql(ListFunctions, { name: 'functions' }),
   graphql(ListRequests, {
     name: 'requests',
-    options: ({requestId}) => ({
-      variables: { refresh: requestId }
-    })
+    options: {
+      pollInterval: 2000
+    }
   }),
+  graphql(CreateRequest, {name: 'createRequest'}),
   graphql(GetRequest, {
     skip: ({requestId}) => {
       return !requestId

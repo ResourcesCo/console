@@ -24,7 +24,6 @@ export default class RequestList extends Component {
   }
 
   render() {
-    
     return (
       <div className="list">
         {

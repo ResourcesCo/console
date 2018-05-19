@@ -3,9 +3,8 @@ import FunctionForm from './function-form'
 import OutputForm from './output-form'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
-import { generate } from 'bson-objectid'
 
-class RequestView extends Component {
+export default class RequestView extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -34,19 +33,6 @@ class RequestView extends Component {
     }
   }
 
-  onSubmit = code => {
-    const variables = {
-      id: generate(),
-      input: code,
-      functionId: this.currentFunction.id
-    }
-    this.setState({loading: variables.id})
-    this.props.onChange({requestId: variables.id})
-    this.props.mutate({
-      variables
-    })
-  }
-
   handleInputChange = ({clientType}) => {
     this.setState({clientType})
   }
@@ -66,7 +52,7 @@ class RequestView extends Component {
   get loading() {
     return (
       this.props.request.id &&
-      this.props.request.id === this.state.loading &&
+      this.props.request.id === this.props.loading &&
       !this.props.request.output
     )
   }
@@ -80,7 +66,7 @@ class RequestView extends Component {
             example={this.functions[0] && this.functions[0].example}
             input={this.input}
             onChange={this.handleInputChange}
-            onSubmit={this.onSubmit}
+            onSubmit={code => this.props.onSubmit({functionId: this.clientType, code})}
           />
         </div>
         <div className="output">
@@ -111,24 +97,3 @@ class RequestView extends Component {
     )
   }
 }
-
-const CreateRequest = gql`
-  mutation createRequest($id: ID!, $input: String!, $functionId: String!) {
-    createRequest(
-      id: $id,
-      input: $input,
-      functionId: $functionId
-    ) {
-      id,
-      input,
-      functionId,
-      output
-    }
-  }
-`
-
-const RequestViewWithData = compose(
-  graphql(CreateRequest)
-)(RequestView)
-
-export default RequestViewWithData
