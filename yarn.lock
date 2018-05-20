@@ -1094,9 +1094,9 @@ bl@^1.0.0:
     readable-stream "^2.3.5"
     safe-buffer "^5.1.1"
 
-blob-collection@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/blob-collection/-/blob-collection-0.1.0.tgz#c91ec37d46a0bc405397d79e37216a9726778f1d"
+blob-collection@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/blob-collection/-/blob-collection-0.1.1.tgz#d42100a5b36b040417cc3393b2e34432fc1a0714"
   dependencies:
     bson-objectid "^1.2.3"
     lodash "^4.17.10"
