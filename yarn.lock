@@ -1095,8 +1095,8 @@ bl@^1.0.0:
     safe-buffer "^5.1.1"
 
 blob-collection@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/blob-collection/-/blob-collection-0.1.1.tgz#d42100a5b36b040417cc3393b2e34432fc1a0714"
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/blob-collection/-/blob-collection-0.1.2.tgz#ad427956dbc9332f76cb30584f193eeb17e293cc"
   dependencies:
     bson-objectid "^1.2.3"
     lodash "^4.17.10"
