@@ -70,6 +70,8 @@ class App extends Component {
             border-right: 2px solid #000;
             padding: 5px;
             color: #ddd;
+            max-height: 100vh;
+            overflow-y: scroll;
           }
           .mainPane {
             width: 70%;

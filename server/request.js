@@ -101,7 +101,7 @@ class Request {
   }
 }
 
-Request.getById = async (id) => {
+Request.getById = async (id) => { 
   const data = await collection.get(id)
   const {_id, ...rest} = data
   return new Request({id: _id, ...rest})
@@ -115,8 +115,8 @@ Request.findById = async (id) => {
   return result
 }
 
-Request.list = async (before = null, count = 100) => {
-  return await collection.list(before, count)
+Request.list = async (before = null, limit = 100) => {
+  return await collection.list({before, limit})
 }
 
 module.exports = Request
