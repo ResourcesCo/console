@@ -24,6 +24,6 @@ package-lock.json
 # config
 config.json
 
-# now-env
-now.json
+# now
+now*.json
 now-secrets.json
