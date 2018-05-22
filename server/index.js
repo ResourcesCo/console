@@ -16,6 +16,20 @@ const {checkEnv} = require('./util')
 
 const handle = app.getRequestHandler()
 
+async function ensureAuth(req, res, next) {
+  try {
+    const {authorized, user} = await auth.getAuth(req.session.accessToken);
+    if (authorized) {
+      req.user = user;
+      next();
+    } else {
+      return res.status(401).json({error: 'Authentication failed.'})
+    }
+  } catch (err) {
+    next(err);
+  }
+}
+
 async function init() {
   await app.prepare()
 
@@ -94,7 +108,7 @@ async function init() {
     return handle(req, res)
   })
 
-  server.use('/graphql', graphqlMiddleware)
+  server.use('/graphql', ensureAuth, graphqlMiddleware)
 
   server.get('*', (req, res) => {
     return handle(req, res)

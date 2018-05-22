@@ -5,6 +5,14 @@ const ApiFunction = require('./api-function')
 const http = ApiFunction.findById('http').fn
 const lruCache = require('lru-cache')
 
+let forcedAuth;
+if (! ['staging', 'production'].includes(process.env.NODE_ENV) &&
+    process.env.DEVELOPMENT_FORCE_AUTH) {
+  const [username, idString] = process.env.DEVELOPMENT_FORCE_AUTH.split(':')
+  const id = parseInt(idString)
+  forcedAuth = {id, username}
+}
+
 const authCache = lruCache({max: 50, maxAge: 30 * 60 * 1000})
 
 const oauth = simpleAuth.create({
@@ -69,9 +77,13 @@ exports.getUser = async (token) => {
   }
 }
 
-exports.checkAuth = async (encryptedToken = null) => {
+exports.getAuth = async (encryptedToken = null) => {
+  if (forcedAuth) {
+    return { authorized: true, user: forcedAuth }
+  }
+
   if (!encryptedToken) {
-    return false
+    return { authorized: false }
   }
 
   const cachedResult = authCache.get(encryptedToken)
@@ -84,9 +96,19 @@ exports.checkAuth = async (encryptedToken = null) => {
   const matchedUsers = allowedUsers.filter(iterUser => {
     return iterUser.id === user.id && iterUser.username === user.username
   })
-  const result = matchedUsers.length > 0
+  const authorized = matchedUsers.length > 0
+  const result = {
+    authorized,
+    user
+  }
+
   authCache.set(encryptedToken, result)
   return result
+}
+
+exports.checkAuth = async (encryptedToken = null) => {
+  const result = await exports.getAuth(encryptedToken);
+  return result.authorized;
 }
 
 exports.seal = async value => {

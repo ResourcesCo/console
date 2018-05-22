@@ -5,25 +5,46 @@ import SendBar from './send-bar'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import classNames from 'classnames'
+import {debounce} from 'lodash'
 
 class FunctionForm extends Component {
   constructor(props) {
     super(props)
     this.state = {
       sending: false,
-      value: null
+      value: undefined
     }
+    this.readCode = debounce(this.readCode, 500, {maxWait: 2000})
   }
 
-  get example() {
-    return this.props.currentFunction && this.props.currentFunction.example
+  readCode() {
+    let data
+    try {
+      data = JSON.parse(this.state.value)
+    } catch (err) {
+      // ignore
+    }
+    let clientType
+    if (data && data.client) {
+      if (typeof data.client === 'string') {
+        clientType = data.client
+      } else {
+        clientType = data.client.type
+      }
+    }
+    this.props.onChange({clientType})
+  }
+
+  get code() {
+    return this.props.input || this.props.example
   }
 
   get value() {
-    return this.state.value === null ? this.example : this.state.value
+    return this.state.value === undefined ? this.code : this.state.value
   }
 
   handleChange = value => {
+    this.readCode()
     this.setState({value: value})
   }
 
@@ -42,17 +63,14 @@ class FunctionForm extends Component {
         <div className="code">
           <div>
             <Code
-              value={this.example}
+              value={this.code}
               onChange={this.handleChange}
             />
           </div>
         </div>
-        <SendBar 
-          allFunctions={this.props.allFunctions}
-          currentFunction={this.props.currentFunction}
+        <SendBar
           loading={this.props.loading}
           onSendClick={this.sendClicked}
-          onFunctionSelect={this.props.onFunctionSelect}
         />
       
         <style jsx>{`
