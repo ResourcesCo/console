@@ -1,7 +1,7 @@
 {
   "client": "http",
   "method": "GET",
-  "url": "https://api.github.com/users/crockford",
+  "url": "https://api.github.com/users/zeit",
   "headers": {
     "Accept": "application/json",
     "User-Agent": "resources"
