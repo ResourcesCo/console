@@ -6,17 +6,19 @@ import RequestView from './request-view'
 import RequestList from './request-list'
 import Router from 'next/router'
 import ObjectID from 'bson-objectid'
-import classNames from 'classnames';
+import classNames from 'classnames'
 
 class App extends Component {
   constructor() {
     super()
     this.state = {
-      loading: undefined
+      loading: undefined,
+      menuOpen: false
     }
   }
 
   handleChange = ({requestId}) => {
+    this.setState({menuOpen: false})
     Router.push({ pathname: '/', query: { id: requestId } },
                 `/requests/${requestId}`,
                 { shallow: true })
