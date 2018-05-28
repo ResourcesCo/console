@@ -9,9 +9,15 @@ export default class SectionBar extends Component {
   }
 
   render() {
-    const tabs = [...this.props.children]
+    const tabs = Array.isArray(this.props.children) ?
+      [...this.props.children] : [this.props.children]
     return (
       <div className="section-bar">
+        {this.props.menu && (
+          <div className="menu" onClick={this.props.onMenuClick}>
+            =
+          </div>
+        )}
         {
           tabs.map(tab => {
             const active = this.props.activeTab == tab.props.value
@@ -29,6 +35,17 @@ export default class SectionBar extends Component {
           .section-bar {
             background-color: #516375;
             color: #A8D3F0;
+          }
+          .menu {
+            display: none;
+            padding-left: 15px;
+            padding-right: 15px;
+            cursor: pointer;
+          }
+          @media (max-width: 599px) {
+            .menu {
+              display: inline-block;
+            }
           }
           .tab {
             display: inline-block;

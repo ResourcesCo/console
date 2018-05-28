@@ -1,6 +1,4 @@
 import {Component} from 'react'
-import dynamic from 'next/dynamic'
-const Code = dynamic(import('./code-with-codemirror'), {ssr: false})
 import Spinner from 'react-svg-spinner'
 import SendIcon from 'react-icons/lib/md/send'
 import classNames from 'classnames'

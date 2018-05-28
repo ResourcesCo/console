@@ -62,6 +62,7 @@ export default class RequestView extends Component {
       <div className="page">
         <div className="function">
           <FunctionForm
+            onMenuClick={this.props.onMenuClick}
             loading={this.loading}
             example={this.functions[0] && this.functions[0].example}
             input={this.input}

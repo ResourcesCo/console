@@ -1,6 +1,7 @@
 import {Component} from 'react'
 import dynamic from 'next/dynamic'
 const Code = dynamic(import('./code-with-codemirror'), {ssr: false})
+import SectionBar from './section-bar'
 import SendBar from './send-bar'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
@@ -12,7 +13,8 @@ class FunctionForm extends Component {
     super(props)
     this.state = {
       sending: false,
-      value: undefined
+      value: undefined,
+      selectedTab: null
     }
     this.readCode = debounce(this.readCode, 500, {maxWait: 2000})
   }
@@ -33,6 +35,14 @@ class FunctionForm extends Component {
       }
     }
     this.props.onChange({clientType})
+  }
+
+  get activeTab() {
+    return this.state.selectedTab || 'input'
+  }
+
+  handleSectionBarChange = (tab) => {
+    this.setState({selectedTab: tab})
   }
 
   get code() {
@@ -60,6 +70,14 @@ class FunctionForm extends Component {
   render() {
     return (
       <form className="function-form" onSubmit={this.sendClicked}>
+        <SectionBar
+          onMenuClick={this.props.onMenuClick} 
+          menu
+          activeTab={this.activeTab} 
+          onChange={this.handleSectionBarChange}
+        >
+          <tab value="input">Input</tab>
+        </SectionBar>
         <div className="code">
           <div>
             <Code

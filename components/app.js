@@ -6,6 +6,7 @@ import RequestView from './request-view'
 import RequestList from './request-list'
 import Router from 'next/router'
 import ObjectID from 'bson-objectid'
+import classNames from 'classnames';
 
 class App extends Component {
   constructor() {
@@ -38,20 +39,34 @@ class App extends Component {
     })
   }
 
+  handleMenuClick = () => {
+    this.setState({menuOpen: true});
+  }
+
+  handleBackdropClick = () => {
+    this.setState({menuOpen: false});
+  }
+
   render() {
     return (
       <div className="app">
         <Head loggedIn={true} />
-        <div className="sidePane">
+        <div className={classNames("sidePane", {open: this.state.menuOpen})}>
           <RequestList 
             requests={this.props.requests} 
             request={this.request} 
             onChange={this.handleChange} 
           />
         </div>
+        <div
+          className={classNames("backdrop", {open: this.state.menuOpen})}
+          onClick={this.handleBackdropClick}
+        >
+        </div>
         <div className="mainPane">
           <div className="innerMainPane">
             <RequestView
+              onMenuClick={this.handleMenuClick}
               functions={this.props.functions}
               request={this.request}
               loading={this.state.loading}
@@ -65,16 +80,60 @@ class App extends Component {
             display: flex;
           }
           .sidePane {
-            width: 30%;
             background-color: rgb(38, 50, 56);
             border-right: 2px solid #000;
+            overflow-y: scroll;
             padding: 5px;
             color: #ddd;
-            max-height: 100vh;
-            overflow-y: scroll;
           }
-          .mainPane {
-            width: 70%;
+          @media (min-width: 600px) {
+            .sidePane {
+              width: 30%;
+              max-height: 100vh;
+            }
+
+            .mainPane {
+              width: 70%;
+            }
+
+            .backdrop {
+              display: none;
+            }
+          }
+          @media (max-width: 599px) {
+            .sidePane {
+              position: absolute;
+              width: 80vw;
+              height: 100vh;
+              top: 0;
+              left: -81vw;
+              z-index: 10;
+              transition: 0.5s ease-out;
+            }
+
+            .sidePane.open {
+              left: 0;
+            }
+
+            .backdrop {
+              display: none;
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100vw;
+              height: 100vh;
+              background-color: rgba(128, 128, 128, 0.6);
+              z-index: 5;
+              transition: 0.5s linear;
+            }
+
+            .backdrop.open {
+              display: block;
+            }
+
+            .mainPane {
+              width: 100%;
+            }
           }
           .innerMainPane {
             position: relative;
