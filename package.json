@@ -9,7 +9,9 @@
     "test": "jest \\.test.js -t 'is authorized' && sleep 1 && jest \\.test.js -t 'is not authorized'"
   },
   "dependencies": {
-    "apollo-client-preset": "^1.0.6",
+    "apollo-cache-inmemory": "^1.2.2",
+    "apollo-client": "^2.3.2",
+    "apollo-link-http": "^1.5.4",
     "aws-sdk": "^2.188.0",
     "axios": "^0.18.0",
     "blob-collection": "^0.1.2",
@@ -27,9 +29,9 @@
     "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.17.10",
     "lru-cache": "^4.1.2",
-    "next": "^5.1.0",
-    "react": "^16.2.0",
-    "react-apollo": "^2.0.4",
+    "next": "^6.0.3",
+    "react": "^16.4.0",
+    "react-apollo": "^2.1.0-beta.3",
     "react-codemirror2": "^4.2.1",
     "react-dom": "^16.2.0",
     "react-icons": "^2.2.7",
